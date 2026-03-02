@@ -117,7 +117,7 @@ function PlayerCard({ player }: { player: typeof players[0] }) {
                     </p>
                     <h3 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">
                         {player.name.split(" ")[0]} <br />
-                        <span className="text-belgium-red">{player.name.split(" ")[1]}</span>
+                        <span className="text-belgium-red">{player.name.split(" ").slice(1).join(" ")}</span>
                     </h3>
                 </div>
             </div>

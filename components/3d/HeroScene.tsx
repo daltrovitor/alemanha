@@ -39,7 +39,12 @@ function SceneContent() {
     );
 }
 
-export default function GlobalScene() {
+interface GlobalSceneProps {
+    isReplaying?: boolean;
+    onReplayFinished?: () => void;
+}
+
+export default function GlobalScene({ isReplaying, onReplayFinished }: GlobalSceneProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -80,7 +85,7 @@ export default function GlobalScene() {
     return (
         <div ref={containerRef} className="fixed inset-0 w-full h-screen bg-black opacity-0 z-0 pointer-events-none overflow-hidden">
             {/* Loading Overlay */}
-            <Loader />
+            <Loader isReplaying={isReplaying} onReplayFinished={onReplayFinished} />
 
             {/* STADIUM BACKGROUND IMAGE LAYER */}
             <div className="bg-image-layer absolute inset-0 z-0 pointer-events-none transition-opacity duration-500">

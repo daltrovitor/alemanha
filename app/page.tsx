@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalScene from "@/components/3d/HeroScene";
@@ -10,10 +10,27 @@ import History from "@/components/ui/History";
 import Players from "@/components/ui/Players";
 import Statistics from "@/components/ui/Stats";
 import FinalFooter from "@/components/ui/Footer";
+import CinematicControls from "@/components/ui/CinematicControls";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const [isReplaying, setIsReplaying] = useState(false);
+  const [heroReplayKey, setHeroReplayKey] = useState(0);
+
+  const handleReplay = useCallback(() => {
+    setIsReplaying(true);
+  }, []);
+
+  const handleReplayFinished = useCallback(() => {
+    setIsReplaying(false);
+  }, []);
+
+  const handleCinematicStart = useCallback(() => {
+    // Increment the replay key so HeroContent re-runs its animations
+    setHeroReplayKey(prev => prev + 1);
+  }, []);
+
   useEffect(() => {
     // Reveal sections on scroll
     const sections = gsap.utils.toArray("section");
@@ -35,13 +52,16 @@ export default function Home() {
   return (
     <main className="relative min-h-screen font-belgium text-white selection:bg-belgium-gold selection:text-black">
       {/* GLOBAL 3D SCENE - Fixed background */}
-      <GlobalScene />
+      <GlobalScene isReplaying={isReplaying} onReplayFinished={handleReplayFinished} />
+
+      {/* CINEMATIC CONTROLS - Play button top-right */}
+      <CinematicControls onReplay={handleReplay} onCinematicStart={handleCinematicStart} />
 
       <SmoothScroll>
         <div className="relative z-10 pointer-events-none">
           {/* HERO SECTION */}
           <section className="relative h-screen overflow-hidden flex items-center justify-center pointer-events-auto">
-            <HeroContent />
+            <HeroContent replayKey={heroReplayKey} />
           </section>
 
           {/* HISTORY TIMELINE */}
@@ -69,5 +89,3 @@ export default function Home() {
     </main>
   );
 }
-
-
