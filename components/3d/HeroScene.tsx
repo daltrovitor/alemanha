@@ -17,23 +17,25 @@ function SceneContent() {
     const groupRef = useRef<THREE.Group>(null!);
 
     useFrame((state) => {
-        // MOVIMENTAÇÃO CINEMATOGRÁFICA (Baseada no tempo + Scroll)
+        // Dramatic Cinematic Camera Movement
         const t = state.clock.getElapsedTime();
         const scroll = window.scrollY / (document.body.scrollHeight - window.innerHeight);
 
-        // Câmera orbita levemente e respira, mas reage ao scroll no eixo Z
-        state.camera.position.x = Math.sin(t * 0.3) * (5 + scroll * 10);
-        state.camera.position.y = Math.cos(t * 0.5) * 2;
-        state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, 22 - scroll * 15, 0.01);
+        // Huge sweeping movements using Sine and scroll
+        state.camera.position.x = Math.sin(t * 0.2) * 8 + (scroll * 15);
+        state.camera.position.y = Math.cos(t * 0.3) * 4 - (scroll * 10);
+        // Brings camera extremely close during scroll for immersive depth
+        state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, 28 - (scroll * 20), 0.02);
 
-        state.camera.lookAt(0, 0, 0);
+        // Always smoothly look slightly off-center to give dynamic framing
+        state.camera.lookAt(new THREE.Vector3(scroll * 5, -scroll * 5, 0));
     });
 
     return (
         <group ref={groupRef}>
             <Lights />
             <SoccerBall />
-            <EnergyParticles count={1500} />
+            <EnergyParticles count={3000} /> {/* Increased particles for cinematic density */}
             <Environment preset="night" />
         </group>
     );
@@ -48,62 +50,44 @@ export default function GlobalScene({ isReplaying, onReplayFinished }: GlobalSce
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Global fade-in
         gsap.to(containerRef.current, {
             opacity: 1,
-            duration: 2,
+            duration: 3,
             ease: "power2.inOut",
         });
 
-        // Transição do fundo: Some no meio e volta no final
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: "body",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: true
-            }
-        });
-
-        tl.to(".bg-image-layer", { opacity: 0.05 })
-            .to(".bg-image-layer", { opacity: 0.05 }) // Mantém escuro no meio
-            .to(".bg-image-layer", { opacity: 0.6 }); // Volta no final (Footer)
-
-        // Parallax do fundo (enquanto visível)
-        gsap.to(".bg-parallax", {
-            yPercent: 30,
+        // Background darkens entirely on scroll to focus on 3D and floating UI
+        gsap.to(".bg-image-layer", {
+            opacity: 0.0,
             ease: "none",
             scrollTrigger: {
                 trigger: "body",
                 start: "top top",
-                end: "bottom bottom",
+                end: "50% center",
                 scrub: true
             }
         });
     }, []);
 
     return (
-        <div ref={containerRef} className="fixed inset-0 w-full h-screen bg-black opacity-0 z-0 pointer-events-none overflow-hidden">
-            {/* Loading Overlay */}
+        <div ref={containerRef} className="fixed inset-0 w-full h-screen bg-fr-dark opacity-0 z-0 pointer-events-none overflow-hidden">
             <Loader isReplaying={isReplaying} onReplayFinished={onReplayFinished} />
 
-            {/* STADIUM BACKGROUND IMAGE LAYER */}
-            <div className="bg-image-layer absolute inset-0 z-0 pointer-events-none transition-opacity duration-500">
-                <div
-                    className="bg-parallax absolute inset-0 bg-cover bg-center opacity-70"
+            {/* Cinematic Vignette */}
+            <div className="cinematic-vignette" />
 
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
+            {/* Subtle background context */}
+            <div className="bg-image-layer absolute inset-0 z-0 pointer-events-none transition-opacity duration-1000">
+                <div className="absolute inset-0 bg-fr-blue opacity-20 mix-blend-color" />
+                <div className="absolute inset-0 bg-gradient-to-b from-fr-dark/50 via-transparent to-fr-dark" />
             </div>
 
-            {/* 3D CONTENT LAYER - Superposto ao fundo mas atrás do texto */}
             <div className="absolute inset-0 z-20">
-
                 <Canvas
                     shadows
-                    dpr={[1, 2]}
-                    camera={{ position: [0, 0, 18], fov: 35 }}
-                    gl={{ alpha: true, antialias: true }}
+                    dpr={[1, 2.5]} // Higher resolution for cinematic feel
+                    camera={{ position: [0, 0, 30], fov: 40 }} // Tighter FOV for cinematic lens compression
+                    gl={{ alpha: true, antialias: true, toneMappingExposure: 1.2 }}
                 >
                     <Suspense fallback={null}>
                         <SceneContent />

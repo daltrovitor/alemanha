@@ -6,7 +6,6 @@ import * as THREE from "three";
 
 export function EnergyParticles({ count = 2000 }) {
     const mesh = useRef<THREE.Points>(null!);
-    const light = useRef<THREE.PointLight>(null!);
 
     const particles = useMemo(() => {
         const temp = [];
@@ -75,7 +74,7 @@ export function EnergyParticles({ count = 2000 }) {
                 </bufferGeometry>
                 <pointsMaterial
                     size={0.15}
-                    color="#A8D8EA"
+                    color="#4A90D9" /* Sky Blue */
                     transparent
                     opacity={0.6}
                     sizeAttenuation

@@ -86,7 +86,7 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
         >
             {/* Tooltip */}
             <div
-                className={`absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap px-4 py-2 rounded-xl bg-dk-navy/90 border border-dk-frost/10 backdrop-blur-md text-dk-white text-sm font-bold tracking-wider uppercase transition-all duration-500 ${showTooltip ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
+                className={`absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap px-4 py-2 rounded-xl bg-fr-navy/90 border border-fr-sky/20 backdrop-blur-md text-fr-white text-sm font-bold tracking-wider uppercase transition-all duration-500 ${showTooltip ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
                     }`}
             >
                 {isAutoScrolling ? "Pausar Tour" : "Modo Cinematográfico"}
@@ -95,31 +95,31 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
             {/* Button */}
             <button
                 onClick={isAutoScrolling ? stopCinematicScroll : startCinematicMode}
-                className="group relative w-14 h-14 rounded-full flex items-center justify-center overflow-hidden"
+                className="group relative w-14 h-14 rounded-full flex items-center justify-center overflow-hidden cinematic-btn-glow"
             >
                 {/* Pulse Ring */}
-                <div ref={pulseRef} className="absolute inset-0 rounded-full border-2 border-dk-frost/60" />
+                <div ref={pulseRef} className="absolute inset-0 rounded-full border-2 border-fr-sky/60" />
 
                 {/* Background */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-dk-red via-dk-red/80 to-dk-frost/30 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-fr-sky via-fr-navy to-fr-red opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Glass overlay */}
-                <div className="absolute inset-[1px] rounded-full bg-dk-navy/40 backdrop-blur-sm border border-dk-frost/20 group-hover:border-dk-frost/50 transition-all duration-500" />
+                <div className="absolute inset-[1px] rounded-full bg-fr-navy/40 backdrop-blur-sm border border-fr-sky/20 group-hover:border-fr-gold/50 transition-all duration-500" />
 
                 {/* Shine */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Icon */}
                 <div className="relative z-10 flex items-center justify-center">
                     {isAutoScrolling ? (
-                        <Pause className="w-5 h-5 text-white drop-shadow-lg group-hover:scale-110 transition-transform" />
+                        <Pause className="w-5 h-5 text-fr-white drop-shadow-lg group-hover:scale-110 transition-transform" />
                     ) : (
-                        <Play className="w-5 h-5 text-white drop-shadow-lg ml-0.5 group-hover:scale-110 transition-transform" />
+                        <Play className="w-5 h-5 text-fr-white drop-shadow-lg ml-0.5 group-hover:scale-110 transition-transform" />
                     )}
                 </div>
 
                 {/* Hover Glow */}
-                <div className="absolute inset-0 rounded-full shadow-[0_0_25px_rgba(168,216,234,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-full shadow-[0_0_25px_rgba(74,144,217,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </button>
         </div>
     );

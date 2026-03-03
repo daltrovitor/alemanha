@@ -4,14 +4,14 @@ import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-denmark",
+  variable: "--font-france",
 });
 
 export const metadata: Metadata = {
-  title: "Seleção da Dinamarca | Danish Dynamite",
-  description: "Experiência cinematográfica 3D imersiva celebrando a identidade, força e história da seleção dinamarquesa.",
+  title: "Seleção da França | Les Bleus",
+  description: "Experiência cinematográfica 3D imersiva celebrando a identidade, força e história da seleção francesa.",
   icons: {
-    icon: "/dinamarca.ico",
+    icon: "/franca.ico",
   },
 };
 
@@ -22,8 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <link rel="shortcut icon" href="/dinamarca.png" type="image/x-icon" />
-      <body className={`${outfit.variable} antialiased selection:bg-dk-frost selection:text-dk-navy`}>
+      <link rel="shortcut icon" href="/franca.png" type="image/x-icon" />
+      <body className={`${outfit.variable} antialiased selection:bg-fr-sky selection:text-fr-navy`}>
         {children}
       </body>
     </html>

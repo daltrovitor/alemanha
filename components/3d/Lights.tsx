@@ -3,18 +3,34 @@
 export function Lights() {
     return (
         <>
-            <ambientLight intensity={0.4} />
-            <pointLight position={[10, 10, 10]} intensity={1.5} color="#A8D8EA" />
+            {/* Very dark cinematic ambient */}
+            <ambientLight intensity={0.15} color="#0A1930" />
+
+            {/* High contrast key light acting as stadium spotlight */}
             <spotLight
-                position={[20, 20, 5]}
-                angle={0.2}
-                penumbra={1}
-                intensity={2}
+                position={[15, 30, 20]}
+                angle={0.15}
+                penumbra={0.8}
+                intensity={8}
                 castShadow
-                color="#C8102E"
+                color="#FFFFFF"
+                shadow-bias={-0.0001}
             />
-            <directionalLight position={[-10, 5, 5]} intensity={0.6} color="#E8F4F8" />
-            <pointLight position={[-15, -10, -10]} intensity={0.5} color="#A8D8EA" />
+
+            {/* Red rim light for dramatic edge */}
+            <spotLight
+                position={[25, 5, -15]}
+                angle={0.4}
+                penumbra={1}
+                intensity={25}
+                color="#ED2939"
+            />
+
+            {/* Blue fill light for shadow colors */}
+            <directionalLight position={[-20, 10, 10]} intensity={1.5} color="#4A90D9" />
+
+            {/* Golden bottom glow reflecting legacy */}
+            <pointLight position={[0, -10, 5]} intensity={3} color="#D4AF37" />
         </>
     );
 }

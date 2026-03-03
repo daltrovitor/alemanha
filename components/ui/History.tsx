@@ -1,155 +1,105 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Trophy, History as HistoryIcon, Flag, Star, Shield } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const events = [
-    {
-        year: "1889",
-        title: "A Fundação",
-        description: "A Federação Dinamarquesa de Futebol (DBU) foi fundada, dando início à tradição futebolística do país.",
-        icon: Flag,
-        accent: "from-dk-red/20 to-transparent",
-    },
-    {
-        year: "1992",
-        title: "Milagre Europeu",
-        description: "A Dinamarca chocou o mundo ao vencer a Euro 1992, entrando como substituta e saindo campeã — o maior feito do futebol dinamarquês.",
-        icon: Trophy,
-        accent: "from-dk-frost/20 to-transparent",
-    },
-    {
-        year: "1998",
-        title: "Quartas na Copa",
-        description: "Uma campanha memorável na França, com vitória épica de 4-1 sobre a Nigéria, chegando às quartas de final.",
-        icon: Star,
-        accent: "from-dk-red/20 to-transparent",
-    },
-    {
-        year: "2021",
-        title: "Coração de Leão",
-        description: "Após o susto com Eriksen, a Dinamarca mostrou resiliência sobre-humana e alcançou as semifinais da Euro 2020.",
-        icon: Shield,
-        accent: "from-dk-frost/20 to-transparent",
-    },
-    {
-        year: "2026",
-        title: "Nova Era Viking",
-        description: "Uma nova geração de talentos carrega o legado dinamarquês com ambição renovada rumo à glória mundial.",
-        icon: HistoryIcon,
-        accent: "from-dk-red/20 to-transparent",
-    },
+    { year: "1904", title: "A Origem", subtitle: "Fundação da FFF, plantando a semente da excelência." },
+    { year: "1998", title: "Primeira Estrela", subtitle: "Zidane e a glória absoluta no Stade de France." },
+    { year: "2000", title: "Os Reis da Europa", subtitle: "O épico Golden Goal de Trezeguet na Eurocopa." },
+    { year: "2018", title: "O Retorno ao Topo", subtitle: "Uma campanha irretocável na Rússia consagra a segunda estrela." },
+    { year: "2026", title: "O Futuro", subtitle: "A busca implacável pela imortalidade no cenário mundial." }
 ];
 
 export default function History() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const lineRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // Title animation
-            gsap.from(".history-title", {
-                y: 80,
-                opacity: 0,
-                duration: 1.5,
-                ease: "expo.out",
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 80%",
+            // Animate the central glowing line
+            gsap.fromTo(lineRef.current,
+                { scaleY: 0 },
+                {
+                    scaleY: 1, ease: "none", scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: "top 20%",
+                        end: "bottom 80%",
+                        scrub: true
+                    }
                 }
-            });
+            );
 
-            // Cards stagger in
-            const cards = gsap.utils.toArray(".history-card");
-            cards.forEach((card: any, i: number) => {
-                gsap.from(card, {
-                    y: 100,
+            // Animate each event dynamically
+            const items = gsap.utils.toArray(".timeline-item");
+            items.forEach((item: any, i) => {
+                const isLeft = i % 2 === 0;
+                gsap.from(item, {
+                    x: isLeft ? -100 : 100,
                     opacity: 0,
-                    scale: 0.9,
-                    duration: 1.2,
-                    ease: "expo.out",
-                    delay: i * 0.15,
+                    filter: "blur(10px)",
+                    duration: 1.5,
+                    ease: "power3.out",
                     scrollTrigger: {
-                        trigger: card,
-                        start: "top 90%",
-                    },
+                        trigger: item,
+                        start: "top 85%"
+                    }
                 });
             });
-        }, containerRef);
+        }, sectionRef);
 
         return () => ctx.revert();
     }, []);
 
     return (
-        <section ref={containerRef} className="relative py-32 px-6 md:px-16 bg-transparent overflow-hidden">
-            <div className="max-w-7xl mx-auto">
-                {/* Title */}
-                <div className="history-title mb-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
-                    <div>
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-16 h-[2px] bg-dk-red" />
-                            <span className="text-dk-frost font-bold tracking-[0.4em] text-xs uppercase">Linha do Tempo</span>
-                        </div>
-                        <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-dk-white uppercase leading-none">
-                            LEGADO <br /><span className="text-dk-red">VIKING</span>
-                        </h2>
-                    </div>
-                    <p className="text-dk-silver text-lg max-w-md font-medium">
-                        Mais de um século de garra, paixão e momentos que definiram uma nação.
-                    </p>
+        <section ref={sectionRef} className="relative py-40 px-6 max-w-6xl mx-auto" id="legacy">
+            {/* Background Glows */}
+            <div className="absolute top-1/4 left-0 w-96 h-96 bg-fr-light-blue/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-fr-red/5 blur-[120px] rounded-full pointer-events-none" />
+
+            <div className="text-center mb-32">
+                <h2 className="text-6xl md:text-9xl font-black text-outline-gold mb-6 uppercase tracking-tighter">
+                    Le Légendaire
+                </h2>
+                <p className="text-fr-silver text-xl md:text-2xl font-light tracking-[0.2em] uppercase max-w-2xl mx-auto">
+                    A arte e a glória tecidas ao longo do tempo.
+                </p>
+            </div>
+
+            <div className="relative">
+                {/* Central Line */}
+                <div className="absolute top-0 bottom-0 left-8 md:left-1/2 w-[2px] -translate-x-1/2 flex flex-col items-center">
+                    <div ref={lineRef} className="w-full h-full origin-top bg-gradient-to-b from-fr-gold via-fr-white to-transparent shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
                 </div>
 
-                {/* Horizontal Scrollable Cards */}
-                <div
-                    ref={scrollRef}
-                    className="flex gap-8 overflow-x-auto scroll-snap-x pb-8 -mx-6 px-6"
-                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                >
-                    {events.map((event, i) => (
-                        <div
-                            key={i}
-                            className="history-card flex-shrink-0 w-[340px] md:w-[400px] group"
-                        >
-                            <div className={`relative p-8 rounded-3xl bg-gradient-to-b ${event.accent} border border-dk-frost/10 backdrop-blur-sm hover:border-dk-red/50 transition-all duration-700 h-full overflow-hidden`}>
-                                {/* Large year watermark */}
-                                <div className="absolute -top-4 -right-4 text-[8rem] font-black text-dk-white/[0.03] select-none leading-none transition-colors duration-500 group-hover:text-dk-red/10">
-                                    {event.year}
+                {/* Timeline Items */}
+                <div className="space-y-24 md:space-y-40">
+                    {events.map((ev, i) => {
+                        const isLeft = i % 2 === 0;
+                        return (
+                            <div key={i} className={`timeline-item relative flex flex-col md:flex-row items-start md:items-center ${isLeft ? "md:flex-row-reverse" : ""} pl-20 md:pl-0`}>
+
+                                {/* Center Dot */}
+                                <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-fr-dark border-2 border-fr-gold shadow-[0_0_20px_rgba(212,175,55,1)] -translate-x-1/2 mt-4 md:mt-0 z-10" />
+
+                                <div className={`w-full md:w-1/2 ${isLeft ? "md:pr-24 md:text-right" : "md:pl-24"}`}>
+                                    <h3 className="text-7xl md:text-8xl font-black text-fr-white/10 tracking-tighter leading-none mb-[-2rem] select-none">
+                                        {ev.year}
+                                    </h3>
+                                    <div className="relative z-10 backdrop-blur-md bg-fr-white/5 border border-fr-white/10 p-8 md:p-12 rounded-[2rem] hover:bg-fr-white/10 hover:border-fr-gold/50 transition-all duration-500">
+                                        <h4 className="text-3xl md:text-5xl font-bold text-fr-white mb-4 uppercase tracking-tight">
+                                            {ev.title}
+                                        </h4>
+                                        <p className="text-fr-silver text-lg font-light leading-relaxed">
+                                            {ev.subtitle}
+                                        </p>
+                                    </div>
                                 </div>
-
-                                {/* Icon */}
-                                <div className="w-14 h-14 rounded-2xl bg-dk-red/10 border border-dk-red/20 flex items-center justify-center mb-6 group-hover:bg-dk-red/20 transition-all duration-500">
-                                    <event.icon className="w-7 h-7 text-dk-frost" />
-                                </div>
-
-                                {/* Year badge */}
-                                <span className="text-dk-red font-black text-2xl tracking-wider">
-                                    {event.year}
-                                </span>
-
-                                <h3 className="text-2xl font-black text-dk-white mt-2 mb-4 group-hover:text-dk-frost transition-colors duration-500">
-                                    {event.title}
-                                </h3>
-
-                                <p className="text-dk-silver text-base leading-relaxed">
-                                    {event.description}
-                                </p>
-
-                                {/* Bottom accent */}
-                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-dk-red via-dk-frost to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Scroll hint */}
-                <div className="flex items-center gap-3 mt-6 justify-center md:justify-start">
-                    <div className="w-8 h-[1px] bg-dk-frost/30" />
-                    <span className="text-dk-frost/40 text-xs tracking-[0.3em] uppercase font-bold">Arraste para explorar</span>
-                    <div className="w-8 h-[1px] bg-dk-frost/30" />
+                        )
+                    })}
                 </div>
             </div>
         </section>

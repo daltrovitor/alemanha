@@ -4,70 +4,50 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import Image from "next/image";
 
-interface HeroContentProps {
-    replayKey?: number;
-}
-
-export default function HeroContent({ replayKey = 0 }: HeroContentProps) {
+export default function HeroContent({ replayKey = 0 }: { replayKey?: number }) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const textRef1 = useRef<HTMLHeadingElement>(null);
+    const textRef2 = useRef<HTMLHeadingElement>(null);
+    const introRef = useRef<HTMLDivElement>(null);
     const logoRef = useRef<HTMLDivElement>(null);
-    const titleRef = useRef<HTMLHeadingElement>(null);
-    const subRef = useRef<HTMLParagraphElement>(null);
-    const lineRef = useRef<HTMLDivElement>(null);
-    const crossRef = useRef<HTMLDivElement>(null);
+    const badgeRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // Reset
-            gsap.set(logoRef.current, { opacity: 0, y: -100, scale: 0, rotation: -180 });
-            gsap.set(titleRef.current, { opacity: 0, x: -200, skewX: 15 });
-            gsap.set(subRef.current, { opacity: 0, y: 80 });
-            gsap.set(lineRef.current, { scaleX: 0 });
-            gsap.set(crossRef.current, { opacity: 0, scale: 3 });
+            gsap.set([textRef1.current, textRef2.current], { yPercent: 120, opacity: 0, rotateX: 45 });
+            gsap.set(introRef.current, { opacity: 0, y: 20 });
+            gsap.set(logoRef.current, { opacity: 0, scale: 0.8, filter: "blur(10px)" });
+            gsap.set(badgeRef.current, { opacity: 0, scale: 0.8 });
 
             const tl = gsap.timeline({ delay: 4.5 });
 
-            // Cross fades in huge and scales down
-            tl.to(crossRef.current, {
-                opacity: 0.06,
+            // Logo & Badge cinematic reveal
+            tl.to([logoRef.current, badgeRef.current], {
+                opacity: 1,
                 scale: 1,
+                filter: "blur(0px)",
                 duration: 2,
                 ease: "expo.out",
-            }, 0);
+                stagger: 0.2
+            });
 
-            // Logo snaps in with spin
-            tl.to(logoRef.current, {
+            // Intro text fade in
+            tl.to(introRef.current, {
+                opacity: 1,
                 y: 0,
-                scale: 1,
-                opacity: 1,
-                rotation: 0,
-                duration: 1.2,
-                ease: "back.out(1.7)",
-            }, 0.3);
-
-            // Title slides from left with skew
-            tl.to(titleRef.current, {
-                x: 0,
-                skewX: 0,
-                opacity: 1,
                 duration: 1.5,
-                ease: "expo.out",
-            }, 0.6);
+                ease: "power3.out",
+            }, "-=1.5");
 
-            // Red line slashes across
-            tl.to(lineRef.current, {
-                scaleX: 1,
-                duration: 0.8,
-                ease: "power4.out",
-            }, 1.0);
-
-            // Subtitle rises
-            tl.to(subRef.current, {
-                y: 0,
+            // Hero texts massive reveal with 3D rotation
+            tl.to([textRef1.current, textRef2.current], {
+                yPercent: 0,
                 opacity: 1,
+                rotateX: 0,
                 duration: 1.5,
-                ease: "power4.out",
-            }, 1.2);
+                ease: "back.out(1.2)",
+                stagger: 0.2
+            }, "-=1");
 
         }, containerRef);
 
@@ -75,58 +55,70 @@ export default function HeroContent({ replayKey = 0 }: HeroContentProps) {
     }, [replayKey]);
 
     return (
-        <section ref={containerRef} className="relative h-screen flex items-center p-6 sm:p-12 lg:p-24 overflow-hidden select-none">
+        <section ref={containerRef} className="relative w-full h-screen flex flex-col justify-between p-8 md:p-16 select-none perspective-[1000px]">
 
-            {/* Scandinavian Cross - Huge Decorative */}
-            <div ref={crossRef} className="absolute inset-0 opacity-0 pointer-events-none">
-                <div className="absolute top-0 bottom-0 left-[28%] w-[12%] bg-dk-red/10" />
-                <div className="absolute left-0 right-0 top-[38%] h-[12%] bg-dk-red/10" />
-            </div>
-
-            {/* Diagonal Split Line */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 right-0 w-[55%] h-full bg-gradient-to-l from-dk-red/5 to-transparent"
-                    style={{ clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0% 100%)" }}
-                />
-            </div>
-
-            {/* Logo at Top Center */}
-            <div ref={logoRef} className="absolute top-8 left-1/2 -translate-x-1/2 w-14 h-14 md:w-20 md:h-20 z-20 opacity-0">
-                <Image
-                    src="/dinamarca.png"
-                    alt="Denmark Logo"
-                    fill
-                    className="object-contain drop-shadow-[0_0_25px_rgba(200,16,46,0.5)]"
-                />
-            </div>
-
-            {/* Content - Left Side */}
-            <div className="z-10 max-w-4xl space-y-6">
-                {/* Red slash line */}
-                <div ref={lineRef} className="w-32 h-1 bg-gradient-to-r from-dk-red to-dk-frost origin-left" />
-
-                <h1
-                    ref={titleRef}
-                    className="text-7xl md:text-[11rem] font-black tracking-tighter leading-[0.85] text-dk-white opacity-0"
-                    style={{
-                        textShadow: "0 0 60px rgba(200, 16, 46, 0.3), 0 0 120px rgba(11, 22, 40, 0.8)",
-                    }}
-                >
-                    <span className="block text-dk-red italic">DINA</span>
-                    <span className="block text-dk-red italic">MARCA</span>
-                    <span className="block text-3xl md:text-5xl tracking-[0.6em] text-dk-frost/80 font-light not-italic mt-4">
-                        DANISH DYNAMITE
+            {/* TOP BAR */}
+            <div className="flex justify-between items-start w-full z-20">
+                <div ref={logoRef} className="relative w-16 h-16 md:w-24 md:h-24">
+                    <Image src="/franca.png" alt="FFF" fill className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" />
+                </div>
+                <div ref={badgeRef} className="flex flex-col items-end">
+                    <span className="text-fr-gold font-bold tracking-[0.3em] text-xs uppercase border border-fr-gold/30 px-4 py-2 rounded-full backdrop-blur-sm">
+                        Équipe de France
                     </span>
-                </h1>
-
-                <p ref={subRef} className="max-w-lg text-lg md:text-xl text-dk-silver font-medium tracking-[0.3em] uppercase opacity-0">
-                    Fogo do Norte. <span className="text-dk-frost">Espírito Viking.</span>
-                </p>
+                    <div className="flex gap-1 mt-4">
+                        <StarIcon /><StarIcon />
+                    </div>
+                </div>
             </div>
 
-            {/* Decorative corner marks */}
-            <div className="absolute top-8 left-8 w-12 h-12 border-l-2 border-t-2 border-dk-red/30 opacity-50" />
-            <div className="absolute bottom-8 right-8 w-12 h-12 border-r-2 border-b-2 border-dk-frost/30 opacity-50" />
+            {/* CENTER CONTENT - Cinematic Typography centered around the 3D ball */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 w-full">
+
+                <div ref={introRef} className="mb-8 flex items-center gap-6">
+                    <div className="w-16 h-[1px] bg-fr-gold" />
+                    <p className="text-fr-white/60 font-semibold tracking-[0.5em] text-sm md:text-base uppercase">
+                        A Grandeza do Futebol
+                    </p>
+                    <div className="w-16 h-[1px] bg-fr-gold" />
+                </div>
+
+                {/* Massive 3D Texts */}
+                <div className="overflow-hidden w-full text-center">
+                    <h1 ref={textRef1} className="text-[12vw] leading-[0.85] font-black tracking-tighter text-fr-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+                        ALLEZ
+                    </h1>
+                </div>
+
+                <div className="overflow-hidden w-full text-center">
+                    <h1 ref={textRef2} className="text-[14vw] leading-[0.85] font-black tracking-tighter text-outline-gold mb-8 italic pr-4">
+                        LES BLEUS
+                    </h1>
+                </div>
+            </div>
+
+            {/* BOTTOM DECORATION */}
+            <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end z-20">
+                <div className="flex flex-col gap-2">
+                    <div className="w-1 h-12 bg-fr-blue" />
+                    <div className="w-1 h-12 bg-fr-white" />
+                    <div className="w-1 h-12 bg-fr-red" />
+                </div>
+
+                <div className="text-right">
+                    <p className="text-fr-silver text-xs font-bold tracking-[0.4em] uppercase mb-2">Role para a Glória</p>
+                    <div className="w-[1px] h-24 bg-gradient-to-b from-fr-gold to-transparent mx-auto relative origin-top animate-pulse" />
+                </div>
+            </div>
+
         </section>
     );
+}
+
+function StarIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-fr-gold drop-shadow-[0_0_5px_rgba(212,175,55,1)]">
+            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
+        </svg>
+    )
 }

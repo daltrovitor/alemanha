@@ -1,171 +1,147 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const players = [
     {
-        name: "Christian Eriksen",
-        position: "Meio-Campo",
+        name: "KYLIAN",
+        surname: "MBAPPÉ",
         number: "10",
-        image: "/eriksen.png",
-        quote: "O coração criativo que rege o meio-campo dinamarquês.",
+        role: "ATACANTE",
+        img: "/mbappe.png",
+        color: "rgba(237, 41, 57, 0.15)" // Red glow
     },
     {
-        name: "Rasmus Højlund",
-        position: "Atacante",
-        number: "9",
-        image: "/hojlund.png",
-        quote: "A nova geração do poder ofensivo viking.",
+        name: "ANTOINE",
+        surname: "GRIEZMANN",
+        number: "7",
+        role: "MEIO-CAMPO",
+        img: "/griezmann.png",
+        color: "rgba(212, 175, 55, 0.15)" // Gold glow
     },
     {
-        name: "Kasper Schmeichel",
-        position: "Goleiro",
-        number: "1",
-        image: "/schmeichel.png",
-        quote: "Guardião do legado, muralha da Dinamarca.",
-    },
+        name: "N'GOLO",
+        surname: "KANTÉ",
+        number: "13",
+        role: "VOLANTE",
+        img: "/kante.png",
+        color: "rgba(74, 144, 217, 0.15)" // Blue glow
+    }
 ];
 
-function PlayerCard({ player, index }: { player: typeof players[0]; index: number }) {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const imgRef = useRef<HTMLDivElement>(null);
-
-    const isReversed = index % 2 !== 0;
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!cardRef.current) return;
-        const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-        const x = (e.clientX - left) / width - 0.5;
-        const y = (e.clientY - top) / height - 0.5;
-
-        gsap.to(cardRef.current, {
-            rotateY: x * 8,
-            rotateX: y * -8,
-            transformPerspective: 1200,
-            duration: 0.5,
-            ease: "power2.out",
-        });
-
-        if (imgRef.current) {
-            gsap.to(imgRef.current, {
-                x: x * 15,
-                y: y * 15,
-                duration: 0.5,
-                ease: "power2.out",
-            });
-        }
-    };
-
-    const handleMouseLeave = () => {
-        gsap.to(cardRef.current, {
-            rotateY: 0,
-            rotateX: 0,
-            duration: 1.2,
-            ease: "elastic.out(1, 0.3)",
-        });
-        if (imgRef.current) {
-            gsap.to(imgRef.current, {
-                x: 0,
-                y: 0,
-                duration: 1,
-                ease: "elastic.out(1, 0.5)",
-            });
-        }
-    };
-
-    return (
-        <div
-            ref={cardRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            className={`relative flex flex-col ${isReversed ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-8 md:gap-16 group cursor-pointer`}
-        >
-            {/* Player Image - Magazine style */}
-            <div className="relative w-full md:w-1/2 aspect-[3/4] max-w-lg rounded-3xl overflow-hidden bg-gradient-to-b from-dk-navy to-dk-red/10 border border-dk-frost/10">
-                {/* Giant Number behind */}
-                <div className="absolute inset-0 flex items-center justify-center text-[20rem] font-black text-dk-white/[0.03] select-none leading-none z-0 transition-all duration-700 group-hover:text-dk-red/10 group-hover:scale-110">
-                    {player.number}
-                </div>
-
-                {/* Image */}
-                <div ref={imgRef} className="relative w-full h-full z-10 transform transition-transform duration-700 group-hover:scale-105">
-                    <Image
-                        src={player.image}
-                        alt={player.name}
-                        fill
-                        className="object-contain object-bottom select-none"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        priority
-                    />
-                </div>
-
-                {/* Bottom gradient overlay */}
-                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-dk-navy to-transparent z-20" />
-
-                {/* Position badge */}
-                <div className="absolute top-6 left-6 z-30">
-                    <span className="px-4 py-2 rounded-full bg-dk-red/20 border border-dk-red/30 text-dk-frost text-xs font-bold tracking-[0.3em] uppercase backdrop-blur-sm">
-                        {player.position}
-                    </span>
-                </div>
-
-                {/* Corner accent */}
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-dk-red to-dk-frost opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-30" />
-            </div>
-
-            {/* Text Content - Editorial */}
-            <div className={`w-full md:w-1/2 space-y-6 ${isReversed ? "md:text-right" : "md:text-left"}`}>
-                <div className={`flex items-center gap-4 ${isReversed ? "md:flex-row-reverse" : ""}`}>
-                    <div className="w-12 h-[2px] bg-dk-red" />
-                    <span className="text-dk-frost font-bold tracking-[0.4em] text-xs uppercase">#{player.number}</span>
-                </div>
-
-                <h3 className="text-5xl md:text-7xl font-black text-dk-white tracking-tighter uppercase leading-none">
-                    {player.name.split(" ")[0]} <br />
-                    <span className="text-dk-red">{player.name.split(" ").slice(1).join(" ")}</span>
-                </h3>
-
-                <p className="text-dk-silver text-lg md:text-xl font-medium italic max-w-md leading-relaxed">
-                    "{player.quote}"
-                </p>
-
-                <div className={`flex gap-3 ${isReversed ? "md:justify-end" : ""}`}>
-                    <div className="w-8 h-1 bg-dk-red rounded-full" />
-                    <div className="w-8 h-1 bg-dk-frost rounded-full" />
-                    <div className="w-4 h-1 bg-dk-silver/30 rounded-full" />
-                </div>
-            </div>
-        </div>
-    );
-}
-
 export default function Players() {
-    return (
-        <section className="py-32 px-6 md:px-16 bg-transparent overflow-hidden">
-            <div className="max-w-7xl mx-auto">
-                {/* Section Header */}
-                <div className="mb-24 space-y-4">
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-[2px] bg-dk-frost" />
-                        <span className="text-dk-frost font-bold tracking-[0.4em] text-xs uppercase">Elenco</span>
-                    </div>
-                    <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-dk-white uppercase leading-none">
-                        Guerreiros <br /><span className="text-dk-frost">do Norte</span>
-                    </h2>
-                    <p className="text-dk-silver text-xl font-medium max-w-lg">
-                        Os Vikings modernos que carregam a bandeira dinamarquesa com honra e paixão.
-                    </p>
-                </div>
+    const containerRef = useRef<HTMLDivElement>(null);
 
-                {/* Players - Magazine Layout */}
-                <div className="space-y-32">
-                    {players.map((p, i) => (
-                        <PlayerCard key={i} player={p} index={i} />
-                    ))}
-                </div>
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            const panels = gsap.utils.toArray(".player-panel");
+
+            panels.forEach((panel: any, i) => {
+                const img = panel.querySelector(".player-img");
+                const text = panel.querySelector(".player-text");
+                const num = panel.querySelector(".player-num");
+
+                // Scroll parallax for the image and text to give a sticky/floating cinematic editorial feel
+                gsap.fromTo(img,
+                    { scale: 1.1, yPercent: 10 },
+                    {
+                        scale: 1, yPercent: -10, ease: "none", scrollTrigger: {
+                            trigger: panel,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    }
+                );
+
+                gsap.fromTo(text,
+                    { x: i % 2 === 0 ? 100 : -100, opacity: 0 },
+                    {
+                        x: 0, opacity: 1, duration: 1.5, ease: "power3.out", scrollTrigger: {
+                            trigger: panel,
+                            start: "top 60%",
+                        }
+                    }
+                );
+
+                gsap.fromTo(num,
+                    { opacity: 0, scale: 0.5 },
+                    {
+                        opacity: 1, scale: 1, duration: 2, ease: "expo.out", scrollTrigger: {
+                            trigger: panel,
+                            start: "top 50%",
+                        }
+                    }
+                );
+            });
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    return (
+        <section ref={containerRef} className="relative w-full bg-[#010308] py-20">
+            {/* Header */}
+            <div className="text-center mb-20 px-6">
+                <h2 className="text-4xl md:text-6xl font-black text-fr-white tracking-[0.3em] uppercase mb-4">
+                    Les Étoiles
+                </h2>
+                <div className="w-24 h-[2px] bg-fr-gold mx-auto" />
             </div>
+
+            {players.map((p, i) => {
+                const isReversed = i % 2 !== 0;
+                return (
+                    <div key={i} className="player-panel relative h-[90vh] min-h-[700px] w-full flex items-center overflow-hidden border-b border-fr-white/5">
+                        {/* Background Giant Number */}
+                        <div className="player-num absolute inset-0 flex items-center justify-center font-black text-[30vw] text-fr-white opacity-[0.02] select-none pointer-events-none z-0 leading-none">
+                            {p.number}
+                        </div>
+
+                        {/* Background Glow based on player */}
+                        <div className="absolute inset-0 z-0 pointer-events-none" style={{ background: `radial-gradient(circle at ${isReversed ? '20%' : '80%'} 50%, ${p.color}, transparent 60%)` }} />
+
+                        <div className={`relative z-10 w-full max-w-screen-2xl mx-auto flex flex-col ${isReversed ? 'md:flex-row-reverse' : 'md:flex-row'} items-center justify-between px-8 md:px-20 h-full gap-12`}>
+
+                            {/* Image Container */}
+                            <div className="player-img relative w-full md:w-1/2 h-1/2 md:h-full flex items-end justify-center">
+                                <Image
+                                    src={p.img}
+                                    alt={p.name}
+                                    fill
+                                    className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
+                                    priority={i === 0}
+                                />
+                                {/* Bottom fade */}
+                                <div className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-[#010308] to-transparent z-10" />
+                            </div>
+
+                            {/* Text Container */}
+                            <div className={`player-text w-full md:w-1/2 flex flex-col justify-center ${isReversed ? 'md:items-start md:text-left' : 'md:items-end md:text-right'}`}>
+                                <h4 className="text-fr-gold font-bold tracking-[0.5em] text-sm md:text-base uppercase mb-4 py-2 px-6 border border-fr-gold/20 rounded-full backdrop-blur-md inline-block">
+                                    {p.role}
+                                </h4>
+                                <h3 className="text-6xl md:text-[8rem] font-black text-outline-hover text-outline leading-[0.8] uppercase tracking-tighter transition-all duration-300">
+                                    {p.name}
+                                </h3>
+                                <h3 className="text-6xl md:text-[8rem] font-black text-fr-white uppercase leading-[0.8] tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                                    {p.surname}
+                                </h3>
+                                <div className={`flex gap-3 mt-12 items-center ${isReversed ? '' : 'justify-end'}`}>
+                                    <span className="text-fr-silver font-bold tracking-widest text-lg font-mono">N° {p.number}</span>
+                                    <div className="w-16 h-[2px] bg-fr-gold" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                );
+            })}
         </section>
     );
 }

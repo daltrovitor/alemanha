@@ -1,49 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dk-red: #C8102E;
-  --color-dk-frost: #A8D8EA;
-  --color-dk-navy: #0B1628;
-  --color-dk-silver: #C0C8D4;
-  --color-dk-white: #F5F5F0;
-  --color-dk-gold: #D4AF37;
-
-  --font-denmark: "Outfit", sans-serif;
+  --color-fr-red: #ED2939;
+  --color-fr-blue: #0A1930;
+  --color-fr-light-blue: #4A90D9;
+  --color-fr-dark: #02060D;
+  --color-fr-white: #F8F9FA;
+  --color-fr-gold: #D4AF37;
+  --font-cinematic: "Outfit", sans-serif;
 }
 
 :root {
-  --background: #060E1A;
-  --foreground: #F5F5F0;
+  --background: #02060D;
+  --foreground: #F8F9FA;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-denmark);
+  font-family: var(--font-cinematic);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Scrollbar - Nordic style */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #060E1A;
+  background: #02060D;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C8102E;
-  border-radius: 10px;
+  background: #D4AF37;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #A8D8EA;
-}
-
-/* Three.js Canvas setup */
 .canvas-container {
   position: absolute;
   top: 0;
@@ -54,7 +46,23 @@ body {
   pointer-events: none;
 }
 
-/* GSAP Scroll Context */
+/* Cinematic text outlines */
+.text-outline {
+  -webkit-text-stroke: 1px rgba(248, 249, 250, 0.15);
+  color: transparent;
+}
+
+.text-outline-gold {
+  -webkit-text-stroke: 1px rgba(212, 175, 55, 0.4);
+  color: transparent;
+}
+
+.text-outline-hover:hover {
+  color: #F8F9FA;
+  -webkit-text-stroke: 0px transparent;
+}
+
+/* GSAP Smooth Scroll */
 #smooth-wrapper {
   overflow: hidden;
   width: 100%;
@@ -66,114 +74,48 @@ body {
   width: 100%;
 }
 
-/* Cinematic Controls Glow - Nordic */
-@keyframes cinematic-glow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(200, 16, 46, 0.4), 0 0 30px rgba(200, 16, 46, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(168, 216, 234, 0.5), 0 0 50px rgba(168, 216, 234, 0.1);
-  }
-}
-
-.cinematic-btn-glow {
-  animation: cinematic-glow 3s ease-in-out infinite;
-}
-
-/* Aurora Borealis Animation */
-@keyframes aurora {
-  0% {
-    background-position: 0% 50%;
-    opacity: 0.3;
-  }
-  25% {
-    opacity: 0.5;
-  }
-  50% {
-    background-position: 100% 50%;
-    opacity: 0.4;
-  }
-  75% {
-    opacity: 0.6;
-  }
-  100% {
-    background-position: 0% 50%;
-    opacity: 0.3;
-  }
-}
-
-.aurora-bg {
-  background: linear-gradient(
-    135deg,
-    rgba(168, 216, 234, 0.15) 0%,
-    rgba(200, 16, 46, 0.1) 25%,
-    rgba(11, 22, 40, 0.3) 50%,
-    rgba(168, 216, 234, 0.2) 75%,
-    rgba(200, 16, 46, 0.05) 100%
-  );
-  background-size: 400% 400%;
-  animation: aurora 15s ease-in-out infinite;
-}
-
-/* Scandinavian Cross Pattern */
-.scandi-cross {
-  position: absolute;
+/* Cinematic Grain Overlay */
+.noise-bg {
+  position: fixed;
+  inset: 0;
   pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-.scandi-cross::before,
-.scandi-cross::after {
-  content: '';
+/* Ultra-smooth gradients */
+.cinematic-vignette {
   position: absolute;
-  background: rgba(200, 16, 46, 0.08);
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 30%, rgba(2, 6, 13, 0.9) 100%);
+  z-index: 10;
 }
 
-.scandi-cross::before {
-  width: 100%;
-  height: 20%;
-  top: 40%;
-  left: 0;
+.split-gradient {
+  background: linear-gradient(90deg, #0A1930 0%, #02060D 50%, #ED2939 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.scandi-cross::after {
-  width: 20%;
-  height: 100%;
-  top: 0;
-  left: 30%;
-}
+/* Cinematic Pulse for Loader */
+@keyframes cine-pulse {
 
-/* Hexagon Shape */
-.hexagon {
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-}
-
-/* Frost glass effect */
-.frost-glass {
-  background: rgba(168, 216, 234, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(168, 216, 234, 0.15);
-}
-
-/* Horizontal scroll snap */
-.scroll-snap-x {
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.scroll-snap-x > * {
-  scroll-snap-align: center;
-}
-
-/* Pulse frost */
-@keyframes frost-pulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(168, 216, 234, 0.2);
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
   }
+
   50% {
-    box-shadow: 0 0 40px rgba(168, 216, 234, 0.4), 0 0 60px rgba(168, 216, 234, 0.1);
+    opacity: 0.5;
+    transform: scale(0.95);
+    filter: blur(2px);
   }
 }
 
-.frost-pulse {
-  animation: frost-pulse 4s ease-in-out infinite;
+.animate-cine-pulse {
+  animation: cine-pulse 3s ease-in-out infinite;
 }

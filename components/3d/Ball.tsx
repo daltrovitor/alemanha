@@ -8,59 +8,57 @@ import gsap from "gsap";
 
 export function SoccerBall() {
     const groupRef = useRef<THREE.Group>(null!);
-    const { scene } = useGLTF("/bola_dinamarca.glb");
+    const { scene } = useGLTF("/bola_franca.glb");
 
     useEffect(() => {
-        groupRef.current.scale.set(50, 50, 50);
-        groupRef.current.position.set(12, 12, 20);
+        // Start massive and far away
+        groupRef.current.scale.set(100, 100, 100);
+        groupRef.current.position.set(30, -20, 50);
 
-        const tl = gsap.timeline({ delay: 8.2 });
+        const tl = gsap.timeline({ delay: 6.0 }); // Wait for loader
 
-        tl.to(groupRef.current.scale, {
-            x: 25.5,
-            y: 25.5,
-            z: 25.5,
-            duration: 5,
-            ease: "expo.inOut",
+        // Cinematic crash into position
+        tl.to(groupRef.current.position, {
+            x: 5, // Slightly offset right for composition
+            y: 0,
+            z: -10,
+            duration: 4,
+            ease: "power4.out",
         });
 
-        tl.to(groupRef.current.position, {
-            x: 0,
-            y: 0,
-            z: -15,
-            duration: 5.5,
-            ease: "expo.inOut",
+        tl.to(groupRef.current.scale, {
+            x: 35,
+            y: 35,
+            z: 35,
+            duration: 4,
+            ease: "power3.out",
         }, 0);
 
         tl.from(groupRef.current.rotation, {
-            y: Math.PI * 6,
-            duration: 7,
-            ease: "power3.out",
+            x: Math.PI * 4,
+            y: -Math.PI * 4,
+            duration: 6,
+            ease: "expo.out",
         }, 0);
     }, []);
 
     useFrame((state) => {
-        const t = state.clock.getElapsedTime();
         const scroll = typeof window !== 'undefined' ? window.scrollY / (document.body.scrollHeight - window.innerHeight) : 0;
 
         if (groupRef.current) {
-            groupRef.current.rotation.y += 0.012 + scroll * 0.04;
-            groupRef.current.rotation.x = Math.sin(t * 0.4) * 0.15;
-            groupRef.current.rotation.z = Math.cos(t * 0.2) * 0.1;
+            // Constant elegant slow spin
+            groupRef.current.rotation.y += 0.005;
+            groupRef.current.rotation.x += 0.002;
 
-            const targetScale = 25.5 - (Math.sin(scroll * Math.PI) * 5);
-            const s = THREE.MathUtils.lerp(groupRef.current.scale.x, Math.max(targetScale, 15.0), 0.05);
-            groupRef.current.scale.set(s, s, s);
-
-            groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, Math.sin(scroll * Math.PI) * 2, 0.05);
-            groupRef.current.position.y = Math.sin(t * 0.6) * 0.5 - (scroll * 2);
-            groupRef.current.position.z = -15 + Math.cos(t * 0.4) * 0.3 + (scroll * 5);
+            // Dramatic parallax reactions to scroll
+            groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, scroll * 15, 0.05);
+            groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, scroll * Math.PI, 0.05);
         }
     });
 
     return (
         <group ref={groupRef}>
-            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+            <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
                 <primitive
                     object={scene}
                     scale={1}
@@ -68,15 +66,17 @@ export function SoccerBall() {
                 />
             </Float>
 
+            {/* Cinematic deep shadow */}
             <ContactShadows
-                position={[0, -2.5, 0]}
-                opacity={0.4}
-                scale={15}
-                blur={3}
-                far={10}
+                position={[0, -5, 0]}
+                opacity={0.8}
+                scale={40}
+                blur={4}
+                far={15}
+                color="#02060D"
             />
         </group>
     );
 }
 
-useGLTF.preload("/bola_dinamarca.glb");
+useGLTF.preload("/bola_franca.glb");
