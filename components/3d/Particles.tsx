@@ -75,7 +75,7 @@ export function EnergyParticles({ count = 2000 }) {
                 </bufferGeometry>
                 <pointsMaterial
                     size={0.15}
-                    color="#FFD700"
+                    color="#A8D8EA"
                     transparent
                     opacity={0.6}
                     sizeAttenuation

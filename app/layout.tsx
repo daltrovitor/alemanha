@@ -4,18 +4,16 @@ import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-belgium",
+  variable: "--font-denmark",
 });
 
 export const metadata: Metadata = {
-  title: "Seleção da Bélgica | Experiência Visual Oficial",
-  description: "Experiência cinematográfica 3D imersiva celebrando a identidade, força e história dos Red Devils belgas.",
+  title: "Seleção da Dinamarca | Danish Dynamite",
+  description: "Experiência cinematográfica 3D imersiva celebrando a identidade, força e história da seleção dinamarquesa.",
   icons: {
-    icon: "/belgica.ico",
+    icon: "/dinamarca.ico",
   },
 };
-
-
 
 export default function RootLayout({
   children,
@@ -23,11 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${outfit.variable} antialiased selection:bg-belgium-gold selection:text-black`}>
+    <html lang="pt-BR">
+      <link rel="shortcut icon" href="/dinamarca.png" type="image/x-icon" />
+      <body className={`${outfit.variable} antialiased selection:bg-dk-frost selection:text-dk-navy`}>
         {children}
       </body>
     </html>
   );
 }
-

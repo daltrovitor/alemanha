@@ -27,18 +27,16 @@ export default function Home() {
   }, []);
 
   const handleCinematicStart = useCallback(() => {
-    // Increment the replay key so HeroContent re-runs its animations
     setHeroReplayKey(prev => prev + 1);
   }, []);
 
   useEffect(() => {
-    // Reveal sections on scroll
     const sections = gsap.utils.toArray("section");
     sections.forEach((section: any) => {
       gsap.from(section, {
         opacity: 0,
-        y: 50,
-        duration: 1.5,
+        y: 60,
+        duration: 1.8,
         ease: "power3.out",
         scrollTrigger: {
           trigger: section,
@@ -50,42 +48,41 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen font-belgium text-white selection:bg-belgium-gold selection:text-black">
+    <main className="relative min-h-screen font-denmark text-dk-white selection:bg-dk-frost selection:text-dk-navy">
       {/* GLOBAL 3D SCENE - Fixed background */}
       <GlobalScene isReplaying={isReplaying} onReplayFinished={handleReplayFinished} />
 
-      {/* CINEMATIC CONTROLS - Play button top-right */}
+      {/* CINEMATIC CONTROLS */}
       <CinematicControls onReplay={handleReplay} onCinematicStart={handleCinematicStart} />
 
       <SmoothScroll>
         <div className="relative z-10 pointer-events-none">
-          {/* HERO SECTION */}
+          {/* HERO SECTION - Split Diagonal */}
           <section className="relative h-screen overflow-hidden flex items-center justify-center pointer-events-auto">
             <HeroContent replayKey={heroReplayKey} />
           </section>
 
-          {/* HISTORY TIMELINE */}
-          <section className="relative border-y border-white/5 bg-transparent pointer-events-auto">
+          {/* HISTORY - Horizontal Cards */}
+          <section className="relative border-y border-dk-frost/5 bg-transparent pointer-events-auto">
             <History />
           </section>
 
-          {/* PLAYERS CARDS */}
+          {/* PLAYERS - Magazine Layout */}
           <section className="relative bg-transparent pointer-events-auto">
             <Players />
           </section>
 
-          {/* STATISTICS SECTION */}
+          {/* STATISTICS - Hexagonal Grid */}
           <section className="relative bg-transparent pointer-events-auto">
             <Statistics />
           </section>
 
-          {/* FINAL CINEMATIC FOOTER */}
+          {/* FOOTER - Aurora Borealis */}
           <div className="pointer-events-auto">
             <FinalFooter />
           </div>
         </div>
       </SmoothScroll>
-
     </main>
   );
 }

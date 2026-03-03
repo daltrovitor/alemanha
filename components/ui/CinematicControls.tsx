@@ -19,15 +19,14 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
     const btnRef = useRef<HTMLDivElement>(null);
     const pulseRef = useRef<HTMLDivElement>(null);
 
-    // Entrance animation
     useEffect(() => {
         if (btnRef.current) {
-            gsap.fromTo(btnRef.current,
+            gsap.fromTo(
+                btnRef.current,
                 { opacity: 0, scale: 0.5, y: -20 },
                 { opacity: 1, scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.5)", delay: 5.5 }
             );
         }
-        // Pulse ring animation
         if (pulseRef.current) {
             gsap.to(pulseRef.current, {
                 scale: 1.8,
@@ -42,13 +41,12 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
 
     const startCinematicScroll = useCallback(() => {
         setIsAutoScrolling(true);
-
         const totalScrollHeight = document.body.scrollHeight - window.innerHeight;
         const scrollObj = { y: 0 };
 
         const tween = gsap.to(scrollObj, {
             y: totalScrollHeight,
-            duration: 30, // 30 seconds for the full cinematic journey
+            duration: 30,
             ease: "power1.inOut",
             onUpdate: () => {
                 window.scrollTo({ top: scrollObj.y });
@@ -56,31 +54,19 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
             onComplete: () => {
                 setIsAutoScrolling(false);
                 autoScrollRef.current = null;
-            }
+            },
         });
 
-        autoScrollRef.current = {
-            kill: () => {
-                tween.kill();
-            }
-        };
+        autoScrollRef.current = { kill: () => tween.kill() };
     }, []);
 
     const startCinematicMode = useCallback(() => {
-        // 1. Scroll to top instantly
         window.scrollTo({ top: 0 });
-
-        // 2. Tell parent to hide hero content
         onCinematicStart?.();
-
-        // 3. Show loading screen again
         onReplay();
-
-        // 4. After loading finishes (4s loader + buffer for hero animations), start cinematic scroll
         setTimeout(() => {
             startCinematicScroll();
-        }, 7000); // 4s loader + 3s for hero entrance animations
-
+        }, 7000);
     }, [onReplay, onCinematicStart, startCinematicScroll]);
 
     const stopCinematicScroll = useCallback(() => {
@@ -100,29 +86,27 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
         >
             {/* Tooltip */}
             <div
-                className={`absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap px-4 py-2 rounded-xl bg-black/80 border border-white/10 backdrop-blur-md text-white text-sm font-bold tracking-wider uppercase transition-all duration-500 ${showTooltip ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"}`}
+                className={`absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap px-4 py-2 rounded-xl bg-dk-navy/90 border border-dk-frost/10 backdrop-blur-md text-dk-white text-sm font-bold tracking-wider uppercase transition-all duration-500 ${showTooltip ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
+                    }`}
             >
                 {isAutoScrolling ? "Pausar Tour" : "Modo Cinematográfico"}
             </div>
 
-            {/* Main Cinematic Play Button */}
+            {/* Button */}
             <button
                 onClick={isAutoScrolling ? stopCinematicScroll : startCinematicMode}
                 className="group relative w-14 h-14 rounded-full flex items-center justify-center overflow-hidden"
             >
                 {/* Pulse Ring */}
-                <div
-                    ref={pulseRef}
-                    className="absolute inset-0 rounded-full border-2 border-belgium-gold/60"
-                />
+                <div ref={pulseRef} className="absolute inset-0 rounded-full border-2 border-dk-frost/60" />
 
-                {/* Background Gradient */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-belgium-red via-belgium-red/80 to-belgium-gold/30 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Background */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-dk-red via-dk-red/80 to-dk-frost/30 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Glassmorphism Overlay */}
-                <div className="absolute inset-[1px] rounded-full bg-black/30 backdrop-blur-sm border border-white/20 group-hover:border-belgium-gold/50 transition-all duration-500" />
+                {/* Glass overlay */}
+                <div className="absolute inset-[1px] rounded-full bg-dk-navy/40 backdrop-blur-sm border border-dk-frost/20 group-hover:border-dk-frost/50 transition-all duration-500" />
 
-                {/* Shine Effect */}
+                {/* Shine */}
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Icon */}
@@ -135,7 +119,7 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
                 </div>
 
                 {/* Hover Glow */}
-                <div className="absolute inset-0 rounded-full shadow-[0_0_25px_rgba(208,0,0,0.5)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-full shadow-[0_0_25px_rgba(168,216,234,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </button>
         </div>
     );

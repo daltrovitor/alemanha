@@ -1,62 +1,59 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 
 const players = [
     {
-        name: "Kevin De Bruyne",
+        name: "Christian Eriksen",
         position: "Meio-Campo",
-        number: "7",
-        image: "/kdb.png",
-        color: "#D00000",
-    },
-    {
-        name: "Romelu Lukaku",
-        position: "Atacante",
         number: "10",
-        image: "/lukaku.png",
-        color: "#000000",
+        image: "/eriksen.png",
+        quote: "O coração criativo que rege o meio-campo dinamarquês.",
     },
     {
-        name: "Jeremy Doku",
-        position: "Ponta",
-        number: "11",
-        image: "/doku.png",
-        color: "#FFD700",
+        name: "Rasmus Højlund",
+        position: "Atacante",
+        number: "9",
+        image: "/hojlund.png",
+        quote: "A nova geração do poder ofensivo viking.",
+    },
+    {
+        name: "Kasper Schmeichel",
+        position: "Goleiro",
+        number: "1",
+        image: "/schmeichel.png",
+        quote: "Guardião do legado, muralha da Dinamarca.",
     },
 ];
 
-
-function PlayerCard({ player }: { player: typeof players[0] }) {
+function PlayerCard({ player, index }: { player: typeof players[0]; index: number }) {
     const cardRef = useRef<HTMLDivElement>(null);
-    const glowRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLDivElement>(null);
+
+    const isReversed = index % 2 !== 0;
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
         const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-        const x = e.clientX - left;
-        const y = e.clientY - top;
-
-        const xPercent = (x / width - 0.5) * 20;
-        const yPercent = (y / height - 0.5) * -20;
+        const x = (e.clientX - left) / width - 0.5;
+        const y = (e.clientY - top) / height - 0.5;
 
         gsap.to(cardRef.current, {
-            rotateY: xPercent,
-            rotateX: yPercent,
-            transformPerspective: 1000,
+            rotateY: x * 8,
+            rotateX: y * -8,
+            transformPerspective: 1200,
             duration: 0.5,
             ease: "power2.out",
         });
 
-        if (glowRef.current) {
-            gsap.to(glowRef.current, {
-                opacity: 1,
-                x: x - width / 2,
-                y: y - height / 2,
-                duration: 0.2,
+        if (imgRef.current) {
+            gsap.to(imgRef.current, {
+                x: x * 15,
+                y: y * 15,
+                duration: 0.5,
+                ease: "power2.out",
             });
         }
     };
@@ -65,13 +62,15 @@ function PlayerCard({ player }: { player: typeof players[0] }) {
         gsap.to(cardRef.current, {
             rotateY: 0,
             rotateX: 0,
-            duration: 1,
+            duration: 1.2,
             ease: "elastic.out(1, 0.3)",
         });
-        if (glowRef.current) {
-            gsap.to(glowRef.current, {
-                opacity: 0,
-                duration: 0.5,
+        if (imgRef.current) {
+            gsap.to(imgRef.current, {
+                x: 0,
+                y: 0,
+                duration: 1,
+                ease: "elastic.out(1, 0.5)",
             });
         }
     };
@@ -81,80 +80,89 @@ function PlayerCard({ player }: { player: typeof players[0] }) {
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative w-full aspect-[2/3] max-w-sm rounded-[2rem] bg-zinc-900 overflow-hidden border border-white/10 group cursor-pointer transition-shadow duration-500 hover:shadow-[0_0_50px_rgba(255,215,0,0.2)]"
+            className={`relative flex flex-col ${isReversed ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-8 md:gap-16 group cursor-pointer`}
         >
-            {/* Background Glow */}
-            <div
-                ref={glowRef}
-                className="absolute inset-0 pointer-events-none bg-belgium-gold/20 blur-[100px] opacity-0 z-0"
-                style={{ width: '100%', height: '100%' }}
-            />
+            {/* Player Image - Magazine style */}
+            <div className="relative w-full md:w-1/2 aspect-[3/4] max-w-lg rounded-3xl overflow-hidden bg-gradient-to-b from-dk-navy to-dk-red/10 border border-dk-frost/10">
+                {/* Giant Number behind */}
+                <div className="absolute inset-0 flex items-center justify-center text-[20rem] font-black text-dk-white/[0.03] select-none leading-none z-0 transition-all duration-700 group-hover:text-dk-red/10 group-hover:scale-110">
+                    {player.number}
+                </div>
 
-            {/* Number Watermark */}
-            <div className="absolute top-4 right-4 text-9xl font-black text-white/5 select-none transition-all duration-500 group-hover:text-belgium-gold/10 group-hover:-translate-y-4">
-                {player.number}
-            </div>
-
-            {/* Player Image */}
-            <div className="absolute inset-0 flex items-end justify-center z-10 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
-
-                <div className="relative w-full h-full transform transition-transform duration-700 group-hover:scale-110 group-hover:-translate-y-5">
+                {/* Image */}
+                <div ref={imgRef} className="relative w-full h-full z-10 transform transition-transform duration-700 group-hover:scale-105">
                     <Image
                         src={player.image}
                         alt={player.name}
                         fill
                         className="object-contain object-bottom select-none"
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         priority
                     />
                 </div>
 
-                {/* Info */}
-                <div className="absolute bottom-10 left-10 z-20 transition-transform duration-500 group-hover:translate-x-2">
-                    <p className="text-belgium-gold font-bold tracking-[0.2em] text-sm mb-1 uppercase opacity-70">
+                {/* Bottom gradient overlay */}
+                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-dk-navy to-transparent z-20" />
+
+                {/* Position badge */}
+                <div className="absolute top-6 left-6 z-30">
+                    <span className="px-4 py-2 rounded-full bg-dk-red/20 border border-dk-red/30 text-dk-frost text-xs font-bold tracking-[0.3em] uppercase backdrop-blur-sm">
                         {player.position}
-                    </p>
-                    <h3 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">
-                        {player.name.split(" ")[0]} <br />
-                        <span className="text-belgium-red">{player.name.split(" ").slice(1).join(" ")}</span>
-                    </h3>
+                    </span>
                 </div>
+
+                {/* Corner accent */}
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-dk-red to-dk-frost opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-30" />
             </div>
 
-            {/* Bottom Accent */}
-            <div className="absolute bottom-0 left-0 right-0 h-2 bg-belgium-red group-hover:bg-belgium-gold transition-colors duration-500" />
+            {/* Text Content - Editorial */}
+            <div className={`w-full md:w-1/2 space-y-6 ${isReversed ? "md:text-right" : "md:text-left"}`}>
+                <div className={`flex items-center gap-4 ${isReversed ? "md:flex-row-reverse" : ""}`}>
+                    <div className="w-12 h-[2px] bg-dk-red" />
+                    <span className="text-dk-frost font-bold tracking-[0.4em] text-xs uppercase">#{player.number}</span>
+                </div>
+
+                <h3 className="text-5xl md:text-7xl font-black text-dk-white tracking-tighter uppercase leading-none">
+                    {player.name.split(" ")[0]} <br />
+                    <span className="text-dk-red">{player.name.split(" ").slice(1).join(" ")}</span>
+                </h3>
+
+                <p className="text-dk-silver text-lg md:text-xl font-medium italic max-w-md leading-relaxed">
+                    "{player.quote}"
+                </p>
+
+                <div className={`flex gap-3 ${isReversed ? "md:justify-end" : ""}`}>
+                    <div className="w-8 h-1 bg-dk-red rounded-full" />
+                    <div className="w-8 h-1 bg-dk-frost rounded-full" />
+                    <div className="w-4 h-1 bg-dk-silver/30 rounded-full" />
+                </div>
+            </div>
         </div>
     );
 }
 
-
 export default function Players() {
     return (
-        <section className="py-32 px-6 bg-transparent overflow-hidden">
+        <section className="py-32 px-6 md:px-16 bg-transparent overflow-hidden">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-                    <div className="space-y-4">
-                        <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase leading-none">
-                            Guerreiros <br /><span className="text-belgium-gold">de Elite</span>
-                        </h2>
-                        <p className="text-gray-400 text-xl font-medium max-w-md">
-                            A geração de ouro e as estrelas em ascensão que carregam o peso de uma nação.
-                        </p>
+                {/* Section Header */}
+                <div className="mb-24 space-y-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-[2px] bg-dk-frost" />
+                        <span className="text-dk-frost font-bold tracking-[0.4em] text-xs uppercase">Elenco</span>
                     </div>
-
-                    <div className="hidden md:block">
-                        <div className="flex gap-4 mb-4">
-                            <div className="w-12 h-1 bg-belgium-red" />
-                            <div className="w-12 h-1 bg-belgium-gold" />
-                            <div className="w-12 h-1 bg-black" />
-                        </div>
-                    </div>
+                    <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-dk-white uppercase leading-none">
+                        Guerreiros <br /><span className="text-dk-frost">do Norte</span>
+                    </h2>
+                    <p className="text-dk-silver text-xl font-medium max-w-lg">
+                        Os Vikings modernos que carregam a bandeira dinamarquesa com honra e paixão.
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                {/* Players - Magazine Layout */}
+                <div className="space-y-32">
                     {players.map((p, i) => (
-                        <PlayerCard key={i} player={p} />
+                        <PlayerCard key={i} player={p} index={i} />
                     ))}
                 </div>
             </div>
