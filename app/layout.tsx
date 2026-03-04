@@ -19,6 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <link rel="shortcut icon" href="/logo.ico" type="image/x-icon" />
       <body className={`${outfit.variable} antialiased selection:bg-de-red selection:text-de-white`}>
         {children}
       </body>
