@@ -11,15 +11,15 @@ export function SoccerBall() {
     const { scene } = useGLTF("/bola_franca.glb");
 
     useEffect(() => {
-        // Start massive and far away
+        // Start massive and far away — dramatic entry
         groupRef.current.scale.set(100, 100, 100);
         groupRef.current.position.set(30, -20, 50);
 
-        const tl = gsap.timeline({ delay: 6.0 }); // Wait for loader
+        const tl = gsap.timeline({ delay: 6.0 });
 
         // Cinematic crash into position
         tl.to(groupRef.current.position, {
-            x: 5, // Slightly offset right for composition
+            x: 5,
             y: 0,
             z: -10,
             duration: 4,
@@ -42,15 +42,13 @@ export function SoccerBall() {
         }, 0);
     }, []);
 
-    useFrame((state) => {
+    useFrame(() => {
         const scroll = typeof window !== 'undefined' ? window.scrollY / (document.body.scrollHeight - window.innerHeight) : 0;
 
         if (groupRef.current) {
-            // Constant elegant slow spin
             groupRef.current.rotation.y += 0.005;
             groupRef.current.rotation.x += 0.002;
 
-            // Dramatic parallax reactions to scroll
             groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, scroll * 15, 0.05);
             groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, scroll * Math.PI, 0.05);
         }
@@ -66,14 +64,14 @@ export function SoccerBall() {
                 />
             </Float>
 
-            {/* Cinematic deep shadow */}
+            {/* Deep shadow */}
             <ContactShadows
                 position={[0, -5, 0]}
-                opacity={0.8}
+                opacity={0.9}
                 scale={40}
                 blur={4}
                 far={15}
-                color="#02060D"
+                color="#050505"
             />
         </group>
     );

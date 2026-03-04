@@ -3,66 +3,76 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Footer() {
+export default function FinalFooter() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const textRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            gsap.from(".footer-reveal", {
-                y: 100,
-                opacity: 0,
-                filter: "blur(20px)",
-                duration: 2,
-                stagger: 0.2,
-                ease: "power4.out",
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 80%",
-                },
-            });
+            gsap.fromTo(
+                textRef.current,
+                { scale: 0.8, opacity: 0, y: 50 },
+                {
+                    scale: 1,
+                    opacity: 1,
+                    y: 0,
+                    duration: 1.5,
+                    ease: "expo.out",
+                    scrollTrigger: {
+                        trigger: containerRef.current,
+                        start: "top 75%",
+                    },
+                }
+            );
         }, containerRef);
         return () => ctx.revert();
     }, []);
 
     return (
-        <footer ref={containerRef} className="relative min-h-screen flex flex-col justify-center items-center text-center p-12 bg-[#010308] overflow-hidden select-none z-10">
+        <footer ref={containerRef} className="w-full relative py-32 mt-32 bg-de-black overflow-hidden pointer-events-auto border-t-[16px] border-de-white">
 
-            {/* Epic volumetric lighting feeling */}
-            <div className="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-fr-gold to-transparent opacity-30" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[500px] bg-fr-gold/5 blur-[150px] pointer-events-none" />
+            {/* Background Flag */}
+            <div className="absolute inset-0 z-0 flex flex-col opacity-20 pointer-events-none">
+                <div className="flex-1 bg-de-black" />
+                <div className="flex-1 bg-de-red" />
+                <div className="flex-1 bg-de-gold" />
+            </div>
 
-            <div className="z-10 max-w-6xl w-full flex flex-col items-center gap-16">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-12 flex flex-col items-center justify-center text-center">
 
-                <div className="footer-reveal w-24 h-24 md:w-32 md:h-32 opacity-80 opacity-hover:100 transition-opacity duration-700">
-                    <Image src="/franca.png" alt="France Logo" width={128} height={128} className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]" />
-                </div>
-
-                <div className="footer-reveal space-y-6">
-                    <h2 className="text-6xl md:text-[10rem] font-black text-fr-white tracking-tighter uppercase leading-[0.8]">
-                        TOUJOURS <br />
-                        <span className="text-outline-gold text-outline">INVINCIBLE</span>
+                <div ref={textRef} className="bg-de-white border-[8px] border-de-black p-8 md:p-16 hard-shadow-gold">
+                    <h2 className="text-6xl md:text-[8rem] font-black uppercase text-de-black leading-none mb-6">
+                        DIE<br />MANNSCHAFT
                     </h2>
-                    <p className="text-fr-silver text-xl md:text-3xl font-light tracking-[0.3em] uppercase max-w-2xl mx-auto">
-                        A eternidade veste <span className="text-fr-white font-bold">Bleu</span>
+                    <div className="h-[4px] bg-de-red w-full my-8" />
+                    <p className="text-2xl md:text-4xl font-black text-de-black uppercase tracking-widest">
+                        A FORÇA NUNCA MORRE
                     </p>
                 </div>
 
-                <div className="footer-reveal flex items-center justify-center gap-12 mt-12 w-full max-w-lg border-t border-fr-white/10 pt-12">
-                    {/* Tricolore block ending */}
-                    <div className="flex w-full h-2 rounded-full overflow-hidden opacity-50 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                        <div className="h-full w-1/3 bg-fr-blue" />
-                        <div className="h-full w-1/3 bg-fr-white" />
-                        <div className="h-full w-1/3 bg-fr-red" />
-                    </div>
+                <div className="mt-20 w-fit">
+                    <button
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                        className="bg-de-red px-12 py-6 text-de-white font-black text-2xl uppercase border-4 border-de-black hard-shadow hover:-translate-y-2 transition-transform duration-300"
+                    >
+                        VOLTAR AO INÍCIO
+                    </button>
                 </div>
 
-                <p className="footer-reveal text-fr-silver/40 text-xs font-bold tracking-[0.5em] uppercase mt-24">
-                    © 2026 FÉDÉRATION FRANÇAISE DE FOOTBALL
-                </p>
+            </div>
+
+            {/* Footer bar */}
+            <div className="absolute bottom-0 w-full bg-de-black border-t-4 border-de-white p-4 flex justify-between items-center z-10">
+                <span className="text-de-white font-bold tracking-widest uppercase">© {new Date().getFullYear()} DFB</span>
+                <div className="flex gap-2">
+                    <div className="w-4 h-4 bg-de-black border-2 border-de-white" />
+                    <div className="w-4 h-4 bg-de-red" />
+                    <div className="w-4 h-4 bg-de-gold" />
+                </div>
+                <span className="text-de-white font-bold tracking-widest uppercase">PRECISÃO</span>
             </div>
         </footer>
     );

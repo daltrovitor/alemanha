@@ -29,7 +29,7 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
         }
         if (pulseRef.current) {
             gsap.to(pulseRef.current, {
-                scale: 1.8,
+                scale: 1.4,
                 opacity: 0,
                 duration: 2,
                 repeat: -1,
@@ -46,14 +46,15 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
 
         const tween = gsap.to(scrollObj, {
             y: totalScrollHeight,
-            duration: 30,
-            ease: "power1.inOut",
+            duration: 25,
+            ease: "none",
             onUpdate: () => {
                 window.scrollTo({ top: scrollObj.y });
             },
             onComplete: () => {
                 setIsAutoScrolling(false);
                 autoScrollRef.current = null;
+                document.body.style.cursor = "auto";
             },
         });
 
@@ -61,15 +62,17 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
     }, []);
 
     const startCinematicMode = useCallback(() => {
+        document.body.style.cursor = "none";
         window.scrollTo({ top: 0 });
-        onCinematicStart?.();
         onReplay();
+        onCinematicStart?.();
         setTimeout(() => {
             startCinematicScroll();
-        }, 7000);
+        }, 5500); // Wait for loader again
     }, [onReplay, onCinematicStart, startCinematicScroll]);
 
     const stopCinematicScroll = useCallback(() => {
+        document.body.style.cursor = "auto";
         if (autoScrollRef.current) {
             autoScrollRef.current.kill();
             autoScrollRef.current = null;
@@ -80,46 +83,34 @@ export default function CinematicControls({ onReplay, onCinematicStart }: Cinema
     return (
         <div
             ref={btnRef}
-            className="fixed top-6 right-6 z-[90] flex items-center gap-3 opacity-0"
+            className="fixed top-6 right-6 z-[90] flex items-center gap-4 opacity-0"
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
         >
             {/* Tooltip */}
             <div
-                className={`absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap px-4 py-2 rounded-xl bg-fr-navy/90 border border-fr-sky/20 backdrop-blur-md text-fr-white text-sm font-bold tracking-wider uppercase transition-all duration-500 ${showTooltip ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
+                className={`absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap px-4 py-2 bg-de-white border-4 border-de-black hard-shadow-gold text-de-black text-sm font-black tracking-widest uppercase transition-all duration-300 ${showTooltip ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
                     }`}
             >
-                {isAutoScrolling ? "Pausar Tour" : "Modo Cinematográfico"}
+                {isAutoScrolling ? "PAUSAR TOUR" : "CINEMÁTICO"}
             </div>
 
             {/* Button */}
             <button
                 onClick={isAutoScrolling ? stopCinematicScroll : startCinematicMode}
-                className="group relative w-14 h-14 rounded-full flex items-center justify-center overflow-hidden cinematic-btn-glow"
+                className="group relative w-16 h-16 flex items-center justify-center bg-de-red border-4 border-de-white shadow-[6px_6px_0px_#FFCE00] hover:translate-x-[2px] hover:translate-y-[2px] transition-transform duration-200 hover:shadow-[4px_4px_0px_#FFCE00] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
             >
-                {/* Pulse Ring */}
-                <div ref={pulseRef} className="absolute inset-0 rounded-full border-2 border-fr-sky/60" />
-
-                {/* Background */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-fr-sky via-fr-navy to-fr-red opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-
-                {/* Glass overlay */}
-                <div className="absolute inset-[1px] rounded-full bg-fr-navy/40 backdrop-blur-sm border border-fr-sky/20 group-hover:border-fr-gold/50 transition-all duration-500" />
-
-                {/* Shine */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Pulse outline */}
+                <div ref={pulseRef} className="absolute inset-[-4px] border-4 border-de-red pointer-events-none" />
 
                 {/* Icon */}
                 <div className="relative z-10 flex items-center justify-center">
                     {isAutoScrolling ? (
-                        <Pause className="w-5 h-5 text-fr-white drop-shadow-lg group-hover:scale-110 transition-transform" />
+                        <Pause className="w-6 h-6 text-de-white md:w-8 md:h-8" strokeWidth={3} />
                     ) : (
-                        <Play className="w-5 h-5 text-fr-white drop-shadow-lg ml-0.5 group-hover:scale-110 transition-transform" />
+                        <Play className="w-6 h-6 text-de-white md:w-8 md:h-8 ml-1" strokeWidth={3} />
                     )}
                 </div>
-
-                {/* Hover Glow */}
-                <div className="absolute inset-0 rounded-full shadow-[0_0_25px_rgba(74,144,217,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </button>
         </div>
     );

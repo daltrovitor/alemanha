@@ -1,107 +1,103 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const events = [
-    { year: "1904", title: "A Origem", subtitle: "Fundação da FFF, plantando a semente da excelência." },
-    { year: "1998", title: "Primeira Estrela", subtitle: "Zidane e a glória absoluta no Stade de France." },
-    { year: "2000", title: "Os Reis da Europa", subtitle: "O épico Golden Goal de Trezeguet na Eurocopa." },
-    { year: "2018", title: "O Retorno ao Topo", subtitle: "Uma campanha irretocável na Rússia consagra a segunda estrela." },
-    { year: "2026", title: "O Futuro", subtitle: "A busca implacável pela imortalidade no cenário mundial." }
+const timelineEvents = [
+    {
+        year: "1954",
+        title: "O MILAGRE DE BERNA",
+        desc: "A Alemanha Ocidental derrota a invencível Hungria por 3-2 em uma das maiores zebras da história das Copas.",
+        color: "bg-de-white",
+        textCol: "text-de-black",
+    },
+    {
+        year: "1974",
+        title: "O FUTEBOL TOTAL VENCIDO",
+        desc: "Em casa, a equipe liderada por Beckenbauer para o Carrossel Holandês de Cruyff.",
+        color: "bg-de-red",
+        textCol: "text-de-white",
+    },
+    {
+        year: "1990",
+        title: "A REVANCHE DE ITÁLIA 90",
+        desc: "Sob o comando de Beckenbauer como técnico, a Alemanha unificada vinga a final de 86 contra a Argentina.",
+        color: "bg-de-gold",
+        textCol: "text-de-black",
+    },
+    {
+        year: "2014",
+        title: "MINEIRAZO & O TETRA",
+        desc: "O lendário 7-1 no Brasil, culminando no gol de Götze no Maracanã para selar a 4ª estrela.",
+        color: "bg-de-black",
+        textCol: "text-de-white",
+        border: "border-4 border-de-white",
+    },
 ];
 
 export default function History() {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const lineRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // Animate the central glowing line
-            gsap.fromTo(lineRef.current,
-                { scaleY: 0 },
-                {
-                    scaleY: 1, ease: "none", scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: "top 20%",
-                        end: "bottom 80%",
-                        scrub: true
+            const cards = gsap.utils.toArray(".history-card");
+            cards.forEach((card: any, i) => {
+                gsap.fromTo(
+                    card,
+                    { opacity: 0, scale: 0.9, y: 50 },
+                    {
+                        opacity: 1,
+                        scale: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "expo.out",
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 85%",
+                            toggleActions: "play none none reverse",
+                        },
                     }
-                }
-            );
-
-            // Animate each event dynamically
-            const items = gsap.utils.toArray(".timeline-item");
-            items.forEach((item: any, i) => {
-                const isLeft = i % 2 === 0;
-                gsap.from(item, {
-                    x: isLeft ? -100 : 100,
-                    opacity: 0,
-                    filter: "blur(10px)",
-                    duration: 1.5,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: item,
-                        start: "top 85%"
-                    }
-                });
+                );
             });
-        }, sectionRef);
-
+        }, containerRef);
         return () => ctx.revert();
     }, []);
 
     return (
-        <section ref={sectionRef} className="relative py-40 px-6 max-w-6xl mx-auto" id="legacy">
-            {/* Background Glows */}
-            <div className="absolute top-1/4 left-0 w-96 h-96 bg-fr-light-blue/5 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-fr-red/5 blur-[120px] rounded-full pointer-events-none" />
-
-            <div className="text-center mb-32">
-                <h2 className="text-6xl md:text-9xl font-black text-outline-gold mb-6 uppercase tracking-tighter">
-                    Le Légendaire
+        <div ref={containerRef} className="w-full max-w-7xl mx-auto px-4 md:px-12 py-32 z-20 pointer-events-auto">
+            <div className="mb-20">
+                <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-de-white inline-block bg-de-red p-4 border-4 border-de-white hard-shadow transform -rotate-2">
+                    A HISTÓRIA
                 </h2>
-                <p className="text-fr-silver text-xl md:text-2xl font-light tracking-[0.2em] uppercase max-w-2xl mx-auto">
-                    A arte e a glória tecidas ao longo do tempo.
-                </p>
+                <div className="w-full h-4 bg-de-gold mt-6 border-y-4 border-de-black" />
             </div>
 
-            <div className="relative">
-                {/* Central Line */}
-                <div className="absolute top-0 bottom-0 left-8 md:left-1/2 w-[2px] -translate-x-1/2 flex flex-col items-center">
-                    <div ref={lineRef} className="w-full h-full origin-top bg-gradient-to-b from-fr-gold via-fr-white to-transparent shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
-                </div>
-
-                {/* Timeline Items */}
-                <div className="space-y-24 md:space-y-40">
-                    {events.map((ev, i) => {
-                        const isLeft = i % 2 === 0;
-                        return (
-                            <div key={i} className={`timeline-item relative flex flex-col md:flex-row items-start md:items-center ${isLeft ? "md:flex-row-reverse" : ""} pl-20 md:pl-0`}>
-
-                                {/* Center Dot */}
-                                <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-fr-dark border-2 border-fr-gold shadow-[0_0_20px_rgba(212,175,55,1)] -translate-x-1/2 mt-4 md:mt-0 z-10" />
-
-                                <div className={`w-full md:w-1/2 ${isLeft ? "md:pr-24 md:text-right" : "md:pl-24"}`}>
-                                    <h3 className="text-7xl md:text-8xl font-black text-fr-white/10 tracking-tighter leading-none mb-[-2rem] select-none">
-                                        {ev.year}
-                                    </h3>
-                                    <div className="relative z-10 backdrop-blur-md bg-fr-white/5 border border-fr-white/10 p-8 md:p-12 rounded-[2rem] hover:bg-fr-white/10 hover:border-fr-gold/50 transition-all duration-500">
-                                        <h4 className="text-3xl md:text-5xl font-bold text-fr-white mb-4 uppercase tracking-tight">
-                                            {ev.title}
-                                        </h4>
-                                        <p className="text-fr-silver text-lg font-light leading-relaxed">
-                                            {ev.subtitle}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })}
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {timelineEvents.map((ev, i) => (
+                    <div
+                        key={ev.year}
+                        className={`history-card p-8 flex flex-col justify-between h-[400px] hover:-translate-y-4 transition-transform duration-300 shadow-2xl ${ev.color} ${ev.textCol} ${ev.border || "border-4 border-transparent"}`}
+                        style={{
+                            boxShadow: i % 2 === 0 ? "10px 10px 0px #FFCE00" : "10px 10px 0px #E2001A"
+                        }}
+                    >
+                        <div>
+                            <span className="text-7xl font-black opacity-80 uppercase leading-none block border-b-4 border-current pb-4 mb-4">
+                                {ev.year}
+                            </span>
+                            <h3 className="text-2xl font-bold uppercase mb-4 leading-tight">
+                                {ev.title}
+                            </h3>
+                        </div>
+                        <p className="font-medium text-lg border-l-4 pl-4 border-current">
+                            {ev.desc}
+                        </p>
+                    </div>
+                ))}
             </div>
-        </section>
+        </div>
     );
 }

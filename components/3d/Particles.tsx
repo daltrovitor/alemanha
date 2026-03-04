@@ -30,8 +30,8 @@ export function EnergyParticles({ count = 2000 }) {
             const a = Math.cos(t) + Math.sin(t * 1) / 10;
             const b = Math.sin(t) + Math.cos(t * 2) / 10;
             const s = Math.cos(t);
-            particle.mx += (state.mouse.x * state.viewport.width - particle.mx) * 0.01;
-            particle.my += (state.mouse.y * state.viewport.height - particle.my) * 0.01;
+            particle.mx += (state.pointer.x * state.viewport.width - particle.mx) * 0.01;
+            particle.my += (state.pointer.y * state.viewport.height - particle.my) * 0.01;
 
             dummy.position.set(
                 (particle.mx / 10) * a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 1) * factor) / 10,
@@ -73,10 +73,10 @@ export function EnergyParticles({ count = 2000 }) {
                     />
                 </bufferGeometry>
                 <pointsMaterial
-                    size={0.15}
-                    color="#4A90D9" /* Sky Blue */
+                    size={0.12}
+                    color="#DD0000"
                     transparent
-                    opacity={0.6}
+                    opacity={0.5}
                     sizeAttenuation
                     blending={THREE.AdditiveBlending}
                 />

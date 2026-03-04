@@ -4,17 +4,26 @@ import { useProgress } from "@react-three/drei";
 import { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
 
-export function Loader({ isReplaying, onReplayFinished }: { isReplaying?: boolean; onReplayFinished?: () => void }) {
+export function Loader({
+    isReplaying,
+    onReplayFinished,
+    onLoadComplete
+}: {
+    isReplaying?: boolean;
+    onReplayFinished?: () => void;
+    onLoadComplete?: () => void;
+}) {
     const { progress, active } = useProgress();
     const [isFinished, setIsFinished] = useState(false);
     const [displayProgress, setDisplayProgress] = useState(0);
-    const [startTime] = useState(Date.now());
+    const [startTime, setStartTime] = useState(Date.now());
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (isReplaying) {
             setIsFinished(false);
             setDisplayProgress(0);
+            setStartTime(Date.now());
         }
     }, [isReplaying]);
 
@@ -39,19 +48,19 @@ export function Loader({ isReplaying, onReplayFinished }: { isReplaying?: boolea
                 if (elapsed >= minDisplayTime && progress === 100 && !active) {
                     finishLoading();
                     clearInterval(interval);
+                    onLoadComplete?.();
                 }
             }
         }, 50);
         return () => clearInterval(interval);
-    }, [progress, active, isReplaying, startTime, onReplayFinished]);
+    }, [progress, active, isReplaying, startTime, onReplayFinished, onLoadComplete]);
 
     const finishLoading = () => {
         if (!containerRef.current) return;
         gsap.to(containerRef.current, {
-            opacity: 0,
-            filter: "blur(20px)",
-            duration: 1.5,
-            ease: "power2.inOut",
+            y: "-100%",
+            duration: 1.2,
+            ease: "expo.inOut",
             onComplete: () => setIsFinished(true)
         });
     };
@@ -60,36 +69,45 @@ export function Loader({ isReplaying, onReplayFinished }: { isReplaying?: boolea
     if (isFinished && isReplaying) return null;
 
     return (
-        <div ref={containerRef} className="fixed inset-0 z-[100] bg-fr-dark flex flex-col items-center justify-center overflow-hidden">
-            {/* Ambient cinematic glow */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                <div className="w-[80vw] h-[20vh] bg-fr-light-blue blur-[100px] rounded-full mx-auto animate-pulse" style={{ animationDuration: "4s" }} />
+        <div ref={containerRef} className="fixed inset-0 z-[100] bg-de-black flex flex-col justify-between overflow-hidden brutalist-border">
+            {/* Top Bar */}
+            <div className="w-full flex h-8">
+                <div className="h-full w-1/3 bg-de-black" />
+                <div className="h-full w-1/3 bg-de-red" />
+                <div className="h-full w-1/3 bg-de-gold" />
             </div>
 
-            <div className="relative z-10 flex flex-col items-center gap-12 w-full max-w-sm px-8">
-                <div className="overflow-hidden">
-                    <h1 className="text-fr-white text-6xl md:text-8xl font-black tracking-widest uppercase animate-cine-pulse">
-                        FFF
+            <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-8">
+                <div className="border-[12px] border-de-white p-12 bg-de-red hard-shadow-gold rotate-2 hover:rotate-0 transition-transform duration-500">
+                    <h1 className="text-de-white text-6xl md:text-9xl font-black tracking-tighter uppercase leading-none">
+                        DFB
                     </h1>
                 </div>
 
-                <div className="w-full space-y-4">
-                    <div className="flex justify-between text-fr-gold text-xs font-bold tracking-[0.4em] uppercase">
-                        <span>{isReplaying ? "Rebobinando" : "Iniciando"}</span>
+                <div className="mt-20 w-full max-w-2xl border-4 border-de-white p-4 bg-de-dark flex flex-col gap-4">
+                    <div className="flex justify-between text-de-white text-xl md:text-2xl font-black uppercase">
+                        <span>{isReplaying ? "INITIALISIERUNG..." : "SYSTEM START..."}</span>
                         <span>{Math.round(displayProgress)}%</span>
                     </div>
 
-                    <div className="relative h-[2px] w-full bg-fr-white/10 overflow-hidden">
+                    <div className="h-8 w-full border-2 border-de-white bg-de-black p-1">
                         <div
-                            className="absolute inset-y-0 left-0 bg-fr-gold shadow-[0_0_15px_rgba(212,175,55,1)] transition-all duration-[50ms] ease-linear"
+                            className="h-full bg-de-gold transition-all duration-[50ms] ease-linear"
                             style={{ width: `${displayProgress}%` }}
                         />
                     </div>
                 </div>
+            </div>
 
-                <p className="text-fr-white/30 text-[10px] uppercase tracking-widest absolute bottom-12">
-                    L'Élégance du Football
+            {/* Bottom Bar */}
+            <div className="w-full border-t-8 border-de-white flex flex-col md:flex-row justify-between items-center bg-de-black p-6 py-4 px-12">
+                <p className="text-de-white text-xl font-bold uppercase tracking-widest">
+                    DIE MANNSCHAFT
                 </p>
+                <div className="flex gap-4">
+                    <div className="w-8 h-8 bg-de-red border-2 border-de-white" />
+                    <div className="w-8 h-8 bg-de-gold border-2 border-de-white animate-pulse" />
+                </div>
             </div>
         </div>
     );

@@ -4,15 +4,12 @@ import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-france",
+  variable: "--font-germany",
 });
 
 export const metadata: Metadata = {
-  title: "Seleção da França | Les Bleus",
-  description: "Experiência cinematográfica 3D imersiva celebrando a identidade, força e história da seleção francesa.",
-  icons: {
-    icon: "/franca.ico",
-  },
+  title: "Die Mannschaft | Seleção da Alemanha",
+  description: "Experiência cinematográfica 3D imersiva celebrando a força, precisão e legado da seleção alemã de futebol.",
 };
 
 export default function RootLayout({
@@ -22,8 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <link rel="shortcut icon" href="/franca.png" type="image/x-icon" />
-      <body className={`${outfit.variable} antialiased selection:bg-fr-sky selection:text-fr-navy`}>
+      <body className={`${outfit.variable} antialiased selection:bg-de-red selection:text-de-white`}>
         {children}
       </body>
     </html>

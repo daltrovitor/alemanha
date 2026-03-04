@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalScene from "@/components/3d/HeroScene";
@@ -17,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const [isReplaying, setIsReplaying] = useState(false);
   const [heroReplayKey, setHeroReplayKey] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleReplay = useCallback(() => {
     setIsReplaying(true);
@@ -24,19 +25,25 @@ export default function Home() {
 
   const handleReplayFinished = useCallback(() => {
     setIsReplaying(false);
+    setHeroReplayKey(prev => prev + 1);
   }, []);
 
   const handleCinematicStart = useCallback(() => {
     setHeroReplayKey(prev => prev + 1);
   }, []);
 
+  const handleLoadComplete = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+
   useEffect(() => {
-    // Cinematic fade in for all sections
+    if (!isLoaded) return;
     const sections = gsap.utils.toArray(".cinematic-section");
     sections.forEach((section: any) => {
       gsap.from(section, {
         opacity: 0,
-        filter: "blur(10px)",
+        filter: "blur(12px)",
+        y: 30,
         duration: 2,
         ease: "power2.out",
         scrollTrigger: {
@@ -46,44 +53,46 @@ export default function Home() {
         }
       });
     });
-  }, []);
+  }, [isLoaded]);
 
   return (
-    <main className="relative min-h-screen font-cinematic text-fr-white bg-fr-dark selection:bg-fr-gold selection:text-fr-dark">
-      {/* Noise Overlay for cinematic film grain feel */}
+    <main className={`relative min-h-screen font-sans text-de-white bg-de-black selection:bg-de-gold selection:text-de-black ${!isLoaded ? "overflow-hidden h-screen" : ""}`}>
+      {/* Film grain overlay */}
       <div className="noise-bg" />
+      {/* Subtle scanline overlay */}
+      <div className="scanline-overlay" />
 
-      {/* GLOBAL 3D SCENE - Fixed background */}
-      <GlobalScene isReplaying={isReplaying} onReplayFinished={handleReplayFinished} />
+      {/* GLOBAL 3D SCENE */}
+      <GlobalScene isReplaying={isReplaying} onReplayFinished={handleReplayFinished} onLoadComplete={handleLoadComplete} />
 
       {/* CINEMATIC CONTROLS */}
-      <CinematicControls onReplay={handleReplay} onCinematicStart={handleCinematicStart} />
+      {isLoaded && <CinematicControls onReplay={handleReplay} onCinematicStart={handleCinematicStart} />}
 
       <SmoothScroll>
-        <div className="relative z-10 pointer-events-none">
+        <div className={`relative z-10 transition-opacity duration-1000 ${isLoaded && !isReplaying ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
 
-          {/* HERO SECTION */}
-          <section className="relative h-screen overflow-hidden flex items-center justify-center pointer-events-auto">
-            <HeroContent replayKey={heroReplayKey} />
+          {/* HERO */}
+          <section className="relative h-screen overflow-hidden flex items-center justify-center">
+            <HeroContent replayKey={heroReplayKey} isLoaded={isLoaded} isReplaying={isReplaying} />
           </section>
 
-          {/* HISTORY - Vertical Cinematic Journey */}
-          <section className="relative bg-transparent pointer-events-auto cinematic-section mt-32">
+          {/* HISTORY */}
+          <section className="relative bg-transparent cinematic-section mt-32">
             <History />
           </section>
 
-          {/* PLAYERS - Sticky Full Screen Editorial */}
-          <section className="relative bg-transparent pointer-events-auto cinematic-section mt-32">
+          {/* PLAYERS */}
+          <section className="relative bg-transparent cinematic-section mt-32">
             <Players />
           </section>
 
-          {/* STATISTICS - Massive Typography */}
-          <section className="relative bg-transparent pointer-events-auto cinematic-section mt-32">
+          {/* STATISTICS */}
+          <section className="relative bg-transparent cinematic-section mt-32">
             <Statistics />
           </section>
 
           {/* FOOTER */}
-          <div className="pointer-events-auto cinematic-section">
+          <div className="cinematic-section">
             <FinalFooter />
           </div>
         </div>

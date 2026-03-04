@@ -6,94 +6,62 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const stats = [
-    { value: 2, label: "Copas do Mundo", highlight: true },
-    { value: 2, label: "Eurocopas", highlight: true },
-    { value: 2, label: "Nations League", highlight: false },
-    { value: 750, label: "Vitórias", highlight: false, plus: true },
-    { value: 2100, label: "Gols Históricos", highlight: false, plus: true },
-    { value: 5, label: "Finais de Copa", highlight: true },
+const Data = [
+    { val: "4", label: "Copas do Mundo" },
+    { val: "3", label: "Eurocopas" },
+    { val: "8", label: "Finais de Copa" },
+    { val: "135", label: "Gols em Mundiais" },
 ];
 
 export default function Statistics() {
-    const sectionRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            const numbers = gsap.utils.toArray(".stat-number");
-
-            numbers.forEach((num: any) => {
-                const targetVal = parseFloat(num.getAttribute("data-val"));
-
-                gsap.fromTo(num,
-                    { innerText: 0 },
+            const nums = gsap.utils.toArray(".stat-num");
+            nums.forEach((num: any) => {
+                gsap.fromTo(
+                    num,
+                    { textContent: "0" },
                     {
-                        innerText: targetVal,
-                        duration: 3,
-                        ease: "power2.out",
-                        snap: { innerText: 1 },
+                        textContent: num.getAttribute("data-target"),
+                        duration: 2,
+                        ease: "circ.out",
+                        snap: { textContent: 1 },
                         scrollTrigger: {
                             trigger: num,
-                            start: "top 80%"
-                        }
+                            start: "top 80%",
+                        },
                     }
                 );
             });
-
-            gsap.from(".stat-box", {
-                y: 50,
-                opacity: 0,
-                filter: "blur(10px)",
-                duration: 1,
-                stagger: 0.1,
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 70%"
-                }
-            });
-
-        }, sectionRef);
-
+        }, containerRef);
         return () => ctx.revert();
     }, []);
 
     return (
-        <section ref={sectionRef} className="relative py-40 px-6 max-w-7xl mx-auto z-20">
-            <div className="text-center mb-24">
-                <h2 className="text-sm md:text-base text-fr-gold font-bold tracking-[0.5em] uppercase border-y border-fr-gold/30 inline-block py-4 px-12 mb-8 bg-fr-dark/50 backdrop-blur-md">
-                    La Puissance
-                </h2>
-                <p className="text-fr-white text-5xl md:text-7xl font-black uppercase tracking-tighter">
-                    Supremacia Mundial
-                </p>
-            </div>
+        <div ref={containerRef} className="w-full bg-de-red py-32 pointer-events-auto border-y-[12px] border-de-white relative overflow-hidden z-20">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {stats.map((s, i) => (
-                    <div key={i} className={`stat-box relative overflow-hidden p-12 rounded-none border ${s.highlight ? 'border-fr-gold/40 bg-fr-gold/5' : 'border-fr-white/10 bg-fr-white/5'} backdrop-blur-sm flex flex-col items-center justify-center group hover:bg-fr-white/10 transition-colors duration-700`}>
+            {/* Background oversized text */}
+            <h2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-black text-de-black opacity-10 uppercase whitespace-nowrap select-none pointer-events-none tracking-tighter mix-blend-multiply">
+                STATISTIK
+            </h2>
 
-                        {/* Dramatic corner frames */}
-                        <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-fr-white/30" />
-                        <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-fr-white/30" />
-
-                        {s.highlight && <div className="absolute top-0 right-0 w-32 h-32 bg-fr-gold/20 blur-[50px] pointer-events-none" />}
-
-                        <div className="flex items-start text-fr-white mb-4">
-                            <span
-                                className={`stat-number text-7xl md:text-8xl font-black tracking-tighter leading-none ${s.highlight ? 'text-fr-gold text-outline-hover' : ''}`}
-                                data-val={s.value}
-                            >
-                                0
-                            </span>
-                            {s.plus && <span className="text-4xl md:text-5xl font-bold text-fr-gold ml-1">+</span>}
-                        </div>
-
-                        <p className="text-fr-silver text-sm md:text-base font-bold tracking-[0.3em] uppercase text-center mt-2 group-hover:text-fr-white transition-colors">
-                            {s.label}
-                        </p>
+            <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+                {Data.map((stat, i) => (
+                    <div key={i} className="flex flex-col items-center justify-center p-8 border-[6px] border-de-black bg-de-white shadow-[10px_10px_0px_0px_#050505] hover:shadow-none hover:translate-x-2 hover:translate-y-2 transition-all duration-300">
+                        <span
+                            className="stat-num text-8xl md:text-9xl font-black text-de-black tracking-tighter"
+                            data-target={stat.val}
+                        >
+                            0
+                        </span>
+                        <span className="text-de-black font-bold uppercase tracking-widest text-center mt-4 border-t-4 border-de-red w-full pt-4">
+                            {stat.label}
+                        </span>
                     </div>
                 ))}
             </div>
-        </section>
+        </div>
     );
 }
